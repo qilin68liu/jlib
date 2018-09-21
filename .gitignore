@@ -1,0 +1,11 @@
+# Ignore this file
+.gitignore
+
+# Ignore generated files
+*.o
+*.a
+*.d
+
+# Ignore below folders
+obj/
+lib/
