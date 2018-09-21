@@ -106,6 +106,26 @@ int j_list_remove(JList *list, void *data)
     return 1;
 }
 
+int j_list_remove_deep(JList *list, void *data, JFreeFunc func)
+{
+    if(list == NULL || data == NULL)
+        return 0;
+
+    JLNode *cur = list->head;
+    while(cur != NULL && cur->data != data)
+    {
+        cur = cur->next;
+    }
+
+    if(cur == NULL)
+        return 0;
+
+    remove_node(list, cur);
+    func(&data);
+
+    return 1;
+}
+
 JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data)
 {
     if(list == NULL || func == NULL)
@@ -136,6 +156,33 @@ JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data)
     }
 
     return removed;
+}
+
+int j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc)
+{
+    if(list == NULL || pfunc == NULL || ffunc == NULL)
+        return 0;
+
+    int count = 0;
+    JLNode *cur = list->head;
+    JLNode *del = NULL;
+    while(cur != NULL)
+    {
+        if(pfunc(cur->data, user_data))
+        {
+            del = cur;
+            cur = cur->next;
+            ffunc(&(del->data));
+            remove_node(list, del);
+            count++;
+        }
+        else
+        {
+            cur = cur->next;
+        }
+    }
+
+    return count;
 }
 
 void j_list_foreach(const JList *list, JFunc func, void *user_data)
