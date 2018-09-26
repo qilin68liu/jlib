@@ -29,6 +29,9 @@ unsigned short  *j_ushort_new(unsigned short num);
 unsigned int    *j_uint_new(unsigned int num);
 unsigned long   *j_ulong_new(unsigned long num);
 
+int j_is_integer(const char *str);
+int j_is_float(const char *str);
+
 void j_atom_free(void **data);
 
 #endif // !_J_TYPES_H_

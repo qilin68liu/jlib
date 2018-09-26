@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include "jtypes.h"
@@ -56,6 +57,49 @@ unsigned long *j_ulong_new(unsigned long num)
     unsigned long *n = (unsigned long *)malloc(sizeof(unsigned long));
     *n = num;
     return n;
+}
+
+int j_is_integer(const char *str)
+{
+    if(str == NULL)
+        return 0;
+
+    // First char should be +,- or digit.
+    if(*str != '+' && *str != '-' && !isdigit(*str))
+        return 0;
+
+    while(*(++str) != '\0')
+        if(!isdigit(*str))
+            return 0;
+
+    return 1;
+}
+
+int j_is_float(const char *str)
+{
+    if(str == NULL)
+        return 0;
+
+    // First char should be +/-/. or digit.
+    if(*str != '+' && *str != '-' && *str != '.' && !isdigit(*str))
+        return 0;
+
+    int found = 0;
+    while(*(++str) != '\0')
+    {
+        if(*str != '.' && !isdigit(*str))
+            return 0;
+        // float should contain only one digit
+        if(*str == '.')
+        {
+            if(found)
+                return 0;
+            else
+                found = 1;
+        }
+    }
+
+    return 1;
 }
 
 void j_atom_free(void **data)
