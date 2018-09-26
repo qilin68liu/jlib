@@ -85,6 +85,8 @@ int j_is_float(const char *str)
         return 0;
 
     int found = 0;
+    if(*str == '.')
+        found = 1;
     while(*(++str) != '\0')
     {
         if(*str != '.' && !isdigit(*str))
