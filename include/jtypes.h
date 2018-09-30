@@ -12,11 +12,12 @@
 #define J_UINT(X)   (*(unsigned int *)X)
 #define J_ULONG(X)  (*(unsigned long *)X)
 
-typedef void  (*JFunc)          (void *data, void *user_data);
-typedef int   (*JCompareFunc)   (const void *a, const void *b);
-typedef int   (*JPredicateFunc) (const void *data, void *user_data);
-typedef void  (*JFreeFunc)      (void **data);
-typedef void *(*JCopyFunc)      (const void *data);
+typedef void  (*JFunc)             (void *data, void *user_data);
+typedef int   (*JCompareFunc)      (const void *a, const void *b);
+typedef int   (*JPredicateFunc)    (const void *data, void *user_data);
+typedef void  (*JFreeFunc)         (void **data);
+typedef void *(*JCopyFunc)         (const void *data);
+typedef void  (*JEventHandlerFunc) (void *object, void *user_data);
 
 // Define some basic data creation for convenience
 short  *j_short_new(short num);
