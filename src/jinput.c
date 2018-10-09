@@ -53,7 +53,7 @@ int j_read_integer(const char *prompt)
     return atoi(BUFF);
 }
 
-float j_read_float(const char *prompt)
+double j_read_double(const char *prompt)
 {
     int i;
     char ch;
@@ -74,7 +74,7 @@ float j_read_float(const char *prompt)
             fprintf(stderr, INVALID_MSG);
     }
 
-    return atof(BUFF);
+    return strtod(BUFF, NULL);
 }
 
 char j_read_single_choice(const char *candidates, const char *prompt)

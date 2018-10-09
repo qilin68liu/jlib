@@ -3,7 +3,7 @@
 
 char  *j_read_string(const char *prompt);
 int    j_read_integer(const char *prompt);
-float  j_read_float(const char *prompt);
+double j_read_double(const char *prompt);
 char   j_read_single_choice(const char *candidates, const char *prompt);
 char  *j_read_multiple_choice(const char *candidates, const char *prompt);
 
