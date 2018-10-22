@@ -18,6 +18,7 @@ typedef int   (*JPredicateFunc)    (const void *data, void *user_data);
 typedef void  (*JFreeFunc)         (void **data);
 typedef void *(*JCopyFunc)         (const void *data);
 typedef void  (*JEventHandlerFunc) (void *object, void *user_data);
+typedef int   (*JHashFunc)         (const void *data);
 
 // Define some basic data creation for convenience
 short  *j_short_new(short num);
