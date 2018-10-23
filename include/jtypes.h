@@ -15,31 +15,32 @@
 typedef void  (*JFunc)             (void *data, void *user_data);
 typedef int   (*JCompareFunc)      (void *a, void *b);
 typedef int   (*JPredicateFunc)    (void *data, void *user_data);
-typedef void  (*JFreeFunc)         (void **data);
+typedef void  (*JFreeFunc)         (void *data);
 typedef void *(*JCopyFunc)         (void *data);
 typedef void  (*JEventHandlerFunc) (void *object, void *user_data);
 typedef int   (*JHashFunc)         (void *data);
 
 // Define some basic data creation for convenience
-short  *j_short_new(short num);
 int    *j_int_new(int num);
-long   *j_long_new(long num);
-float  *j_float_new(float num);
+int    *j_int_copy(void *data);
 double *j_double_new(double num);
+double *j_double_copy(void *data);
 
-unsigned short  *j_ushort_new(unsigned short num);
-unsigned int    *j_uint_new(unsigned int num);
-unsigned long   *j_ulong_new(unsigned long num);
+int j_int_cm(void *a, void *b);
+int j_int_eq(void *a, void *b);
+int j_int_lt(void *a, void *b);
+int j_int_le(void *a, void *b);
+int j_int_gt(void *a, void *b);
+int j_int_ge(void *a, void *b);
 
-int j_short_compare(void *a, void *b);
-int j_int_compare(void *a, void *b);
-int j_long_compare(void *a, void *b);
-int j_float_compare(void *a, void *b);
-int j_double_compare(void *a, void *b);
+int j_double_cm(void *a, void *b);
+int j_double_eq(void *a, void *b);
+int j_double_lt(void *a, void *b);
+int j_double_le(void *a, void *b);
+int j_double_gt(void *a, void *b);
+int j_double_ge(void *a, void *b);
 
 int j_is_integer(char *str);
-int j_is_float(char *str);
-
-void j_atom_free(void **data);
+int j_is_decimal(char *str);
 
 #endif // !_J_TYPES_H_

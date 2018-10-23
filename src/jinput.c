@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <jtypes.h>
 #include "jinput.h"
 
 #define BUFF_SIZE 128
@@ -68,7 +67,7 @@ double j_read_double(char *prompt)
             BUFF[i++] = ch;
         BUFF[i] = '\0';
 
-        if(j_is_float(BUFF))
+        if(j_is_decimal(BUFF))
             break;
         else
             fprintf(stderr, INVALID_MSG);

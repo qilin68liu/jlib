@@ -7,8 +7,8 @@ typedef struct _j_stack JStack;
 
 // Constructor and Destructor
 JStack *j_stack_new();
-void    j_stack_free(JStack **stack);
-void    j_stack_free_deep(JStack **stack, JFreeFunc func);
+void    j_stack_free(JStack *stack);
+void    j_stack_free_deep(JStack *stack, JFreeFunc func);
 
 // Basic Operations
 int     j_stack_push(JStack *stack, void *data);

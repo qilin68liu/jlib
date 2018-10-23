@@ -1,6 +1,8 @@
 #ifndef _J_INPUT_H
 #define _J_INPUT_H
 
+#include "jtypes.h"
+
 char  *j_read_string(char *prompt);
 int    j_read_integer(char *prompt);
 double j_read_double(char *prompt);

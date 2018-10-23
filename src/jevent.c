@@ -10,7 +10,6 @@ struct _j_event_handler {
 };
 
 static JEventHandler *new_handler(JEventHandlerFunc func, void *user_data);
-static void free_handler(JEventHandler **handler);
 static int find(JEventHandler *a, JEventHandlerFunc func);
 static void call(JEventHandler *handler, void *user_data);
 
@@ -19,12 +18,12 @@ JEvent *j_event_new()
     return (JEvent *)j_list_new();
 }
 
-void j_event_free(JEvent **event)
+void j_event_free(JEvent *event)
 {
-    if(*event == NULL)
+    if(event == NULL)
         return;
 
-    j_list_free_deep(event, (JFreeFunc)free_handler);
+    j_list_free_deep(event, (JFreeFunc)free);
 }
 
 int j_event_register(JEvent *event, JEventHandlerFunc func, void *user_data)
@@ -41,7 +40,7 @@ int j_event_unregister(JEvent *event, JEventHandlerFunc func)
     if(event == NULL || func == NULL)
         return 0;
 
-    return j_list_remove_deep_if(event, (JPredicateFunc)find, func, (JFreeFunc)free_handler);
+    return j_list_remove_deep_if(event, (JPredicateFunc)find, func, (JFreeFunc)free);
 }
 
 int j_event_invoke(void *object, JEvent *event)
@@ -59,15 +58,6 @@ static JEventHandler *new_handler(JEventHandlerFunc func, void *user_data)
     handler->func = func;
     handler->user_data = user_data;
     return handler;
-}
-
-static void free_handler(JEventHandler **handler)
-{
-    if(*handler == NULL)
-        return;
-
-    free(*handler);
-    *handler = NULL;
 }
 
 static int find(JEventHandler *a, JEventHandlerFunc func)

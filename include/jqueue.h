@@ -7,8 +7,8 @@ typedef struct _j_queue JQueue;
 
 // Constructor and Destructor
 JQueue *j_queue_new();
-void    j_queue_free(JQueue **queue);
-void    j_queue_free_deep(JQueue **queue, JFreeFunc func);
+void    j_queue_free(JQueue *queue);
+void    j_queue_free_deep(JQueue *queue, JFreeFunc func);
 
 // Basic Operations
 int     j_queue_enqueue(JQueue *queue, void *data);

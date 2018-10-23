@@ -14,7 +14,6 @@ struct _j_stack {
 };
 
 static JSNode *new_node(void *data);
-static void free_node(JSNode **node);
 
 JStack *j_stack_new()
 {
@@ -26,41 +25,39 @@ JStack *j_stack_new()
     return stack;
 }
 
-void j_stack_free(JStack **stack)
+void j_stack_free(JStack *stack)
 {
     if(stack == NULL)
         return;
 
-    JSNode *cur = (*stack)->head;
+    JSNode *cur = stack->head;
     JSNode *del = NULL;
     while(cur != NULL)
     {
         del = cur;
         cur = cur->next;
-        free_node(&del);
+        free(del);
     }
 
-    free(*stack);
-    *stack = NULL;
+    free(stack);
 }
 
-void j_stack_free_deep(JStack **stack, JFreeFunc func)
+void j_stack_free_deep(JStack *stack, JFreeFunc func)
 {
     if(stack == NULL || func == NULL)
         return;
 
-    JSNode *cur = (*stack)->head;
+    JSNode *cur = stack->head;
     JSNode *del = NULL;
     while(cur != NULL)
     {
         del = cur;
         cur = cur->next;
-        func(&(del->data));
-        free_node(&del);
+        func(del->data);
+        free(del);
     }
 
-    free(*stack);
-    *stack = NULL;
+    free(stack);
 }
 
 int j_stack_push(JStack *stack, void *data)
@@ -90,7 +87,7 @@ void *j_stack_pop(JStack *stack)
     JSNode *del = stack->head;
     void *data = del->data;
     stack->head = del->next;
-    free_node(&del);
+    free(del);
     stack->length--;
 
     return data;
@@ -128,10 +125,4 @@ static JSNode *new_node(void *data)
     node->next = NULL;
 
     return node;
-}
-
-static void free_node(JSNode **node)
-{
-    free(*node);
-    *node = NULL;
 }

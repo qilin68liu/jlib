@@ -3,13 +3,6 @@
 #include <string.h>
 #include "jtypes.h"
 
-short *j_short_new(short num)
-{
-    short *n = (short *)malloc(sizeof(short));
-    *n = num;
-    return n;
-}
-
 int *j_int_new(int num)
 {
     int *n = (int *)malloc(sizeof(int));
@@ -17,18 +10,9 @@ int *j_int_new(int num)
     return n;
 }
 
-long *j_long_new(long num)
+int *j_int_copy(void *data)
 {
-    long *n = (long *)malloc(sizeof(long));
-    *n = num;
-    return n;
-}
-
-float *j_float_new(float num)
-{
-    float *n = (float *)malloc(sizeof(float));
-    *n = num;
-    return n;
+    return j_int_new(J_INT(data));
 }
 
 double *j_double_new(double num)
@@ -38,50 +22,100 @@ double *j_double_new(double num)
     return n;
 }
 
-unsigned short *j_ushort_new(unsigned short num)
+double *j_double_copy(void *data)
 {
-    unsigned short *n = (unsigned short *)malloc(sizeof(unsigned short));
-    *n = num;
-    return n;
+    return j_double_new(J_DOUBLE(data));
 }
 
-unsigned int *j_uint_new(unsigned int num)
-{
-    unsigned int *n = (unsigned int *)malloc(sizeof(unsigned int));
-    *n = num;
-    return n;
-}
-
-unsigned long *j_ulong_new(unsigned long num)
-{
-    unsigned long *n = (unsigned long *)malloc(sizeof(unsigned long));
-    *n = num;
-    return n;
-}
-
-int j_short_compare(void *a, void *b)
-{
-    return J_SHORT(a) - J_SHORT(b);
-}
-
-int j_int_compare(void *a, void *b)
+int j_int_cm(void *a, void *b)
 {
     return J_INT(a) - J_INT(b);
 }
 
-int j_long_compare(void *a, void *b)
+int j_int_eq(void *a, void *b)
 {
-    return J_LONG(a) - J_LONG(b);
+    if(J_INT(a) == J_INT(b))
+        return 1;
+
+    return 0;
 }
 
-int j_float_compare(void *a, void *b)
+int j_int_lt(void *a, void *b)
 {
-    return J_FLOAT(a) - J_FLOAT(b);
+    if(J_INT(a) < J_INT(b))
+        return 1;
+
+    return 0;
 }
 
-int j_double_compare(void *a, void *b)
+int j_int_le(void *a, void *b)
+{
+    if(J_INT(a) <= J_INT(b))
+        return 1;
+
+    return 0;
+}
+
+int j_int_gt(void *a, void *b)
+{
+    if(J_INT(a) > J_INT(b))
+        return 1;
+
+    return 0;
+}
+
+int j_int_ge(void *a, void *b)
+{
+    if(J_INT(a) >= J_INT(b))
+        return 1;
+
+    return 0;
+}
+
+
+int j_double_cm(void *a, void *b)
 {
     return J_DOUBLE(a) - J_DOUBLE(b);
+}
+
+int j_double_eq(void *a, void *b)
+{
+    if(J_DOUBLE(a) == J_DOUBLE(b))
+        return 1;
+
+    return 0;
+}
+
+int j_double_lt(void *a, void *b)
+{
+    if(J_DOUBLE(a) < J_DOUBLE(b))
+        return 1;
+
+    return 0;
+}
+
+int j_double_le(void *a, void *b)
+{
+    if(J_DOUBLE(a) <= J_DOUBLE(b))
+        return 1;
+
+    return 0;
+}
+
+int j_double_gt(void *a, void *b)
+{
+    if(J_DOUBLE(a) > J_DOUBLE(b))
+        return 1;
+
+    return 0;
+}
+
+int j_double_ge(void *a, void *b)
+{
+    if(J_DOUBLE(a) >= J_DOUBLE(b))
+        return 1;
+
+    return 0;
 }
 
 int j_is_integer(char *str)
@@ -100,7 +134,7 @@ int j_is_integer(char *str)
     return 1;
 }
 
-int j_is_float(char *str)
+int j_is_decimal(char *str)
 {
     if(str == NULL)
         return 0;
@@ -127,10 +161,4 @@ int j_is_float(char *str)
     }
 
     return 1;
-}
-
-void j_atom_free(void **data)
-{
-    free(*data);
-    *data = NULL;
 }

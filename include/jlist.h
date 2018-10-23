@@ -7,17 +7,15 @@ typedef struct _j_list JList;
 
 // Custructor and Destructor
 JList *j_list_new();
-void   j_list_free(JList **list);
-void   j_list_free_deep(JList **list, JFreeFunc func);
+void   j_list_free(JList *list);
+void   j_list_free_deep(JList *list, JFreeFunc func);
 
 // Basic Operations
 int    j_list_add(JList *list, void *data);
-int    j_list_remove(JList *list, void *data);
-int    j_list_remove_deep(JList *list, void *data, JFreeFunc func);
 JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data);
 int    j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc);
 void   j_list_foreach(JList *list, JFunc func, void *user_data);
-void  *j_list_find(JList *list, JCompareFunc func, void *data);
+void  *j_list_search(JList *list, JCompareFunc func, void *data);
 
 // List Properties
 int    j_list_empty(JList *list);

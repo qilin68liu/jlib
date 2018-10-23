@@ -24,32 +24,30 @@ JHash *j_hash_new(size_t length, JHashFunc hash_func)
     return table;
 }
 
-void j_hash_free(JHash **table)
+void j_hash_free(JHash *table)
 {
-    if(*table == NULL)
+    if(table == NULL)
         return;
 
     // free the lists
-    for(int i = 0; i < (*table)->length; i++)
-        j_list_free(&(*table)->table[i]);
-    free((*table)->table);
+    for(int i = 0; i < table->length; i++)
+        j_list_free(table->table[i]);
+    free(table->table);
 
-    free(*table);
-    *table = NULL;
+    free(table);
 }
 
-void j_hash_free_deep(JHash **table, JFreeFunc func)
+void j_hash_free_deep(JHash *table, JFreeFunc func)
 {
-    if(*table == NULL || func == NULL)
+    if(table == NULL || func == NULL)
         return;
 
     // free the lists
-    for(int i = 0; i < (*table)->length; i++)
-        j_list_free_deep(&(*table)->table[i], func);
-    free((*table)->table);
+    for(int i = 0; i < table->length; i++)
+        j_list_free_deep(table->table[i], func);
+    free(table->table);
 
-    free(*table);
-    *table = NULL;
+    free(table);
 }
 
 size_t j_hash_size(JHash *table)
@@ -71,34 +69,25 @@ int j_hash_add(JHash *table, void *data)
     return 1;
 }
 
-int j_hash_remove(JHash *table, void *data)
+int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc)
 {
-    if(table == NULL)
+    if(table == NULL || pfunc == NULL || ffunc == NULL)
         return 0;
 
-    j_list_remove(table->table[table->hash_func(data)], data);
-    table->size--;
+    int count = 0;
+    for(int i = 0; i < table->length; i++)
+        count += j_list_remove_deep_if(table->table[i], pfunc, user_data, ffunc);
+    table->size -= count;
 
-    return 1;
+    return count;
 }
 
-int j_hash_remove_deep(JHash *table, void *data, JFreeFunc func)
-{
-    if(table == NULL || func == NULL)
-        return 0;
-
-    j_list_remove_deep(table->table[table->hash_func(data)], data, func);
-    table->size--;
-
-    return 1;
-}
-
-void *j_hash_find(JHash *table, JCompareFunc func, void *data)
+void *j_hash_search(JHash *table, JCompareFunc func, void *data)
 {
     if(table == NULL || func == NULL)
         return NULL;
 
-    return j_list_find(table->table[table->hash_func(data)], func, data);
+    return j_list_search(table->table[table->hash_func(data)], func, data);
 }
 
 void j_hash_foreach(JHash *table, JFunc func, void *user_data)

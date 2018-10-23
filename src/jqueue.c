@@ -15,7 +15,6 @@ struct _j_queue {
 };
 
 static JQNode *new_node(void *data);
-static void free_node(JQNode **node);
 
 JQueue *j_queue_new()
 {
@@ -28,41 +27,39 @@ JQueue *j_queue_new()
     return queue;
 }
 
-void j_queue_free(JQueue **queue)
+void j_queue_free(JQueue *queue)
 {
-    if(*queue == NULL)
+    if(queue == NULL)
         return;
 
-    JQNode *cur = (*queue)->head;
+    JQNode *cur = queue->head;
     JQNode *del = NULL;
     while(cur != NULL)
     {
         del = cur;
         cur = cur->next;
-        free_node(&del);
+        free(del);
     }
 
-    free(*queue);
-    *queue = NULL;
+    free(queue);
 }
 
-void j_queue_free_deep(JQueue **queue, JFreeFunc func)
+void j_queue_free_deep(JQueue *queue, JFreeFunc func)
 {
-    if(*queue == NULL || func == NULL)
+    if(queue == NULL || func == NULL)
         return;
 
-    JQNode *cur = (*queue)->head;
+    JQNode *cur = queue->head;
     JQNode *del = NULL;
     while(cur != NULL)
     {
         del = cur;
         cur = cur->next;
-        func(&(del->data));
-        free_node(&del);
+        func(del->data);
+        free(del);
     }
 
-    free(*queue);
-    *queue = NULL;
+    free(queue);
 }
 
 int j_queue_enqueue(JQueue *queue, void *data)
@@ -94,7 +91,7 @@ void *j_queue_dequeue(JQueue *queue)
     JQNode *del = queue->head;
     void *data = del->data;
     queue->head = del->next;
-    free_node(&del);
+    free(del);
     queue->length--;
 
     return data;
@@ -140,10 +137,4 @@ static JQNode *new_node(void *data)
     node->next = NULL;
 
     return node;
-}
-
-static void free_node(JQNode **node)
-{
-    free(*node);
-    *node = NULL;
 }

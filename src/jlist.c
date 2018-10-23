@@ -17,7 +17,6 @@ struct _j_list {
 };
 
 static JLNode *new_node(void *data);
-static void free_node(JLNode **node);
 static void remove_node(JList *list, JLNode *node);
 
 JList *j_list_new()
@@ -30,41 +29,39 @@ JList *j_list_new()
     return list;
 }
 
-void j_list_free(JList **list)
+void j_list_free(JList *list)
 {
-    if(*list == NULL)
+    if(list == NULL)
         return;
 
-    JLNode *cur = (*list)->head;
+    JLNode *cur = list->head;
     JLNode *del = NULL;
     while(cur != NULL)
     {
         del = cur;
         cur = cur->next;
-        free_node(&del);
+        free(del);
     }
 
-    free(*list);
-    *list = NULL;
+    free(list);
 }
 
-void j_list_free_deep(JList **list, JFreeFunc func)
+void j_list_free_deep(JList *list, JFreeFunc func)
 {
-    if(*list == NULL || func == NULL)
+    if(list == NULL || func == NULL)
         return;
 
-    JLNode *cur = (*list)->head;
+    JLNode *cur = list->head;
     JLNode *del = NULL;
     while(cur != NULL)
     {
         del = cur;
         cur = cur->next;
-        func(&(del->data));
-        free_node(&del);
+        func(del->data);
+        free(del);
     }
 
-    free(*list);
-    *list = NULL;
+    free(list);
 }
 
 int j_list_add(JList *list, void *data)
@@ -84,45 +81,6 @@ int j_list_add(JList *list, void *data)
         list->tail = node;
     }
     list->length++;
-    return 1;
-}
-
-int j_list_remove(JList *list, void *data)
-{
-    if(list == NULL || data == NULL)
-        return 0;
-
-    JLNode *cur = list->head;
-    while(cur != NULL && cur->data != data)
-    {
-        cur = cur->next;
-    }
-
-    if(cur == NULL)
-        return 0;
-
-    remove_node(list, cur);
-
-    return 1;
-}
-
-int j_list_remove_deep(JList *list, void *data, JFreeFunc func)
-{
-    if(list == NULL || data == NULL)
-        return 0;
-
-    JLNode *cur = list->head;
-    while(cur != NULL && cur->data != data)
-    {
-        cur = cur->next;
-    }
-
-    if(cur == NULL)
-        return 0;
-
-    remove_node(list, cur);
-    func(&data);
-
     return 1;
 }
 
@@ -151,7 +109,7 @@ JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data)
 
     if(removed->length == 0)
     {
-        j_list_free(&removed);
+        j_list_free(removed);
         return NULL;
     }
 
@@ -172,7 +130,7 @@ int j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JF
         {
             del = cur;
             cur = cur->next;
-            ffunc(&(del->data));
+            ffunc(del->data);
             remove_node(list, del);
             count++;
         }
@@ -198,7 +156,7 @@ void j_list_foreach(JList *list, JFunc func, void *user_data)
     }
 }
 
-void *j_list_find(JList *list, JCompareFunc func, void *data)
+void *j_list_search(JList *list, JCompareFunc func, void *data)
 {
     if(list == NULL || func == NULL)
         return NULL;
@@ -289,15 +247,6 @@ static JLNode *new_node(void *data)
     return node;
 }
 
-static void free_node(JLNode **node)
-{
-    if(*node == NULL)
-        return;
-
-    free(*node);
-    *node = NULL;
-}
-
 static void remove_node(JList *list, JLNode *node)
 {
     if(node == NULL)
@@ -323,6 +272,6 @@ static void remove_node(JList *list, JLNode *node)
         node->next->prev = node->prev;
     }
 
-    free_node(&node);
+    free(node);
     list->length--;
 }
