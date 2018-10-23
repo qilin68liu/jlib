@@ -59,7 +59,32 @@ unsigned long *j_ulong_new(unsigned long num)
     return n;
 }
 
-int j_is_integer(const char *str)
+int j_short_compare(void *a, void *b)
+{
+    return J_SHORT(a) - J_SHORT(b);
+}
+
+int j_int_compare(void *a, void *b)
+{
+    return J_INT(a) - J_INT(b);
+}
+
+int j_long_compare(void *a, void *b)
+{
+    return J_LONG(a) - J_LONG(b);
+}
+
+int j_float_compare(void *a, void *b)
+{
+    return J_FLOAT(a) - J_FLOAT(b);
+}
+
+int j_double_compare(void *a, void *b)
+{
+    return J_DOUBLE(a) - J_DOUBLE(b);
+}
+
+int j_is_integer(char *str)
 {
     if(str == NULL)
         return 0;
@@ -75,7 +100,7 @@ int j_is_integer(const char *str)
     return 1;
 }
 
-int j_is_float(const char *str)
+int j_is_float(char *str)
 {
     if(str == NULL)
         return 0;

@@ -44,7 +44,7 @@ int j_event_unregister(JEvent *event, JEventHandlerFunc func)
     return j_list_remove_deep_if(event, (JPredicateFunc)find, func, (JFreeFunc)free_handler);
 }
 
-int j_event_invoke(void *object, const JEvent *event)
+int j_event_invoke(void *object, JEvent *event)
 {
     if(object == NULL || event == NULL)
         return 0;

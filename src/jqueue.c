@@ -100,7 +100,7 @@ void *j_queue_dequeue(JQueue *queue)
     return data;
 }
 
-size_t j_queue_length(const JQueue *queue)
+size_t j_queue_length(JQueue *queue)
 {
     if(queue == NULL)
         return 0;
@@ -108,7 +108,7 @@ size_t j_queue_length(const JQueue *queue)
     return queue->length;
 }
 
-int j_queue_empty(const JQueue *queue)
+int j_queue_empty(JQueue *queue)
 {
     if(queue == NULL || queue->length == 0)
         return 1;
@@ -116,7 +116,7 @@ int j_queue_empty(const JQueue *queue)
     return 0;
 }
 
-void *j_queue_head(const JQueue *queue)
+void *j_queue_head(JQueue *queue)
 {
     if(queue == NULL || queue->length == 0)
         return NULL;
@@ -124,7 +124,7 @@ void *j_queue_head(const JQueue *queue)
     return queue->head->data;
 }
 
-void *j_queue_tail(const JQueue *queue)
+void *j_queue_tail(JQueue *queue)
 {
     if(queue == NULL || queue->length == 0)
         return NULL;

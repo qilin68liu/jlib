@@ -15,8 +15,8 @@ int     j_stack_push(JStack *stack, void *data);
 void   *j_stack_pop(JStack *stack);
 
 // Stack Properties
-size_t  j_stack_length(const JStack *stack);
-int     j_stack_empty(const JStack *stack);
-void    *j_stack_top(const JStack *stack);
+size_t  j_stack_length(JStack *stack);
+int     j_stack_empty(JStack *stack);
+void    *j_stack_top(JStack *stack);
 
 #endif // !_J_STACK_H

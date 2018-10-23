@@ -15,9 +15,9 @@ int     j_queue_enqueue(JQueue *queue, void *data);
 void   *j_queue_dequeue(JQueue *queue);
 
 // Queue Properties
-int     j_queue_empty(const JQueue *queue);
-size_t  j_queue_length(const JQueue *queue);
-void   *j_queue_head(const JQueue *queue);
-void   *j_queue_tail(const JQueue *queue);
+int     j_queue_empty(JQueue *queue);
+size_t  j_queue_length(JQueue *queue);
+void   *j_queue_head(JQueue *queue);
+void   *j_queue_tail(JQueue *queue);
 
 #endif // !_J_QUEUE_H

@@ -10,6 +10,6 @@ void    j_event_free(JEvent **event);
 
 int j_event_register(JEvent *event, JEventHandlerFunc func, void *user_data);
 int j_event_unregister(JEvent *event, JEventHandlerFunc func);
-int j_event_invoke(void *object, const JEvent *event);
+int j_event_invoke(void *object, JEvent *event);
 
 #endif // !_J_EVENT_H

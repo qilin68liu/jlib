@@ -96,7 +96,7 @@ void *j_stack_pop(JStack *stack)
     return data;
 }
 
-size_t j_stack_length(const JStack *stack)
+size_t j_stack_length(JStack *stack)
 {
     if(stack == NULL)
         return 0;
@@ -104,7 +104,7 @@ size_t j_stack_length(const JStack *stack)
     return stack->length;
 }
 
-int j_stack_empty(const JStack *stack)
+int j_stack_empty(JStack *stack)
 {
     if(stack == NULL || stack->length == 0)
         return 1;
@@ -112,7 +112,7 @@ int j_stack_empty(const JStack *stack)
     return 0;
 }
 
-void *j_stack_top(const JStack *stack)
+void *j_stack_top(JStack *stack)
 {
     if(stack == NULL || stack->length == 0)
         return NULL;

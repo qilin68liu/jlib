@@ -185,7 +185,7 @@ int j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JF
     return count;
 }
 
-void j_list_foreach(const JList *list, JFunc func, void *user_data)
+void j_list_foreach(JList *list, JFunc func, void *user_data)
 {
     if(list == NULL || func == NULL)
         return;
@@ -198,7 +198,7 @@ void j_list_foreach(const JList *list, JFunc func, void *user_data)
     }
 }
 
-void *j_list_find(const JList *list, JCompareFunc func, const void *data)
+void *j_list_find(JList *list, JCompareFunc func, void *data)
 {
     if(list == NULL || func == NULL)
         return NULL;
@@ -213,7 +213,7 @@ void *j_list_find(const JList *list, JCompareFunc func, const void *data)
     return cur->data;
 }
 
-int j_list_empty(const JList *list)
+int j_list_empty(JList *list)
 {
     if(list == NULL || list->length == 0)
         return 1;
@@ -221,7 +221,7 @@ int j_list_empty(const JList *list)
     return 0;
 }
 
-size_t j_list_length(const JList *list)
+size_t j_list_length(JList *list)
 {
     if(list == NULL)
         return 0;
@@ -229,7 +229,7 @@ size_t j_list_length(const JList *list)
     return list->length;
 }
 
-void *j_list_head(const JList *list)
+void *j_list_head(JList *list)
 {
     if(list == NULL)
         return NULL;
@@ -237,7 +237,7 @@ void *j_list_head(const JList *list)
     return list->head->data;
 }
 
-void *j_list_tail(const JList *list)
+void *j_list_tail(JList *list)
 {
     if(list == NULL)
         return NULL;
@@ -245,7 +245,7 @@ void *j_list_tail(const JList *list)
     return list->tail->data;
 }
 
-JList *j_list_copy(const JList *list)
+JList *j_list_copy(JList *list)
 {
     if(list == NULL)
         return NULL;
@@ -261,7 +261,7 @@ JList *j_list_copy(const JList *list)
     return new_list;
 }
 
-JList *j_list_copy_deep(const JList *list, JCopyFunc func)
+JList *j_list_copy_deep(JList *list, JCopyFunc func)
 {
     if(list == NULL || func == NULL)
         return NULL;

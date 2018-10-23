@@ -16,17 +16,17 @@ int    j_list_remove(JList *list, void *data);
 int    j_list_remove_deep(JList *list, void *data, JFreeFunc func);
 JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data);
 int    j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc);
-void   j_list_foreach(const JList *list, JFunc func, void *user_data);
-void  *j_list_find(const JList *list, JCompareFunc func, const void *data);
+void   j_list_foreach(JList *list, JFunc func, void *user_data);
+void  *j_list_find(JList *list, JCompareFunc func, void *data);
 
 // List Properties
-int    j_list_empty(const JList *list);
-size_t j_list_length(const JList *list);
-void  *j_list_head(const JList *list);
-void  *j_list_tail(const JList *list);
+int    j_list_empty(JList *list);
+size_t j_list_length(JList *list);
+void  *j_list_head(JList *list);
+void  *j_list_tail(JList *list);
 
 // Copy features
-JList *j_list_copy(const JList *list);
-JList *j_list_copy_deep(const JList *list, JCopyFunc func);
+JList *j_list_copy(JList *list);
+JList *j_list_copy_deep(JList *list, JCopyFunc func);
 
 #endif // !_J_LIST_H
