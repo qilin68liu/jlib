@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include "jhash.h"
-#include "jlist.h"
 
 struct _j_hash {
     size_t length;
@@ -8,6 +7,8 @@ struct _j_hash {
     JList **table;
     JHashFunc hash_func;
 };
+
+static void merge_to(void *data, void *user_data);
 
 JHash *j_hash_new(size_t length, JHashFunc hash_func)
 {
@@ -69,6 +70,23 @@ int j_hash_add(JHash *table, void *data)
     return 1;
 }
 
+JList *j_hash_remove_if(JHash *table, JPredicateFunc func, void *user_data)
+{
+    if(table == NULL || func == NULL)
+        return NULL;
+
+    JList *removed = j_list_new();
+    JList *tmp = NULL;
+    for(int i = 0; i < table->length; i++)
+    {
+        tmp = j_list_remove_if(table->table[i], func, user_data);
+        j_list_foreach(tmp, merge_to, removed);
+        j_list_free(tmp);
+    }
+
+    return removed;
+}
+
 int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc)
 {
     if(table == NULL || pfunc == NULL || ffunc == NULL)
@@ -97,4 +115,9 @@ void j_hash_foreach(JHash *table, JFunc func, void *user_data)
 
     for(int i = 0; i < table->length; i++)
         j_list_foreach(table->table[i], func, user_data);
+}
+
+static void merge_to(void *data, void *user_data)
+{
+    j_list_add((JList *)user_data, data);
 }

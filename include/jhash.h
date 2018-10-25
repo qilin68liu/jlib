@@ -2,7 +2,7 @@
 #define _J_HASH_H
 
 #include <stddef.h>
-#include "jtypes.h"
+#include "jlist.h"
 
 typedef struct _j_hash JHash;
 
@@ -12,8 +12,9 @@ void   j_hash_free_deep(JHash *table, JFreeFunc func);
 
 size_t j_hash_size(JHash *table);
 
-int j_hash_add(JHash *table, void *data);
-int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc);
+int    j_hash_add(JHash *table, void *data);
+JList *j_hash_remove_if(JHash *table, JPredicateFunc func, void *user_data);
+int    j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc);
 
 void *j_hash_search(JHash *table, JCompareFunc func, void *data);
 void  j_hash_foreach(JHash *table, JFunc func, void *user_data);
