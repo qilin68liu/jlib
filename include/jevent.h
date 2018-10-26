@@ -1,6 +1,7 @@
 #ifndef _J_EVENT_H
 #define _J_EVENT_H
 
+#include "jtypes.h"
 #include "jlist.h"
 
 typedef JList JEvent;

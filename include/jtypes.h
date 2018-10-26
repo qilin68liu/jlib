@@ -1,8 +1,6 @@
 #ifndef _J_TYPES_H_
 #define _J_TYPES_H_
 
-#include <stddef.h>
-
 #define J_SHORT(X)  (*(short *)X)
 #define J_INT(X)    (*(int *)X)
 #define J_LONG(X)   (*(long *)X)

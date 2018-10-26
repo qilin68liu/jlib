@@ -1,6 +1,7 @@
 #ifndef _J_LIST_H
 #define _J_LIST_H
 
+#include <stddef.h>
 #include "jtypes.h"
 
 typedef struct _j_list JList;

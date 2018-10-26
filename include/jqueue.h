@@ -1,6 +1,7 @@
 #ifndef _J_QUEUE_H
 #define _J_QUEUE_H
 
+#include <stddef.h>
 #include "jtypes.h"
 
 typedef struct _j_queue JQueue;

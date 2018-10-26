@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "jtypes.h"
 #include "jevent.h"
 
 typedef struct _j_event_handler JEventHandler;

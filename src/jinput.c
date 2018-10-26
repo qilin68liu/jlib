@@ -1,6 +1,8 @@
-#include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include "jtypes.h"
 #include "jinput.h"
 
 #define BUFF_SIZE 128

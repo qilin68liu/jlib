@@ -1,6 +1,7 @@
 #ifndef _J_STACK_H
 #define _J_STACK_H
 
+#include <stddef.h>
 #include "jtypes.h"
 
 typedef struct _j_stack JStack;
