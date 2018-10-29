@@ -83,6 +83,13 @@ JList *j_hash_remove_if(JHash *table, JPredicateFunc func, void *user_data)
         j_list_foreach(tmp, merge_to, removed);
         j_list_free(tmp);
     }
+
+    if(j_list_length(removed) == 0)
+    {
+        j_list_free(removed);
+        return NULL;
+    }
+
     table->size -= j_list_length(removed);
 
     return removed;
