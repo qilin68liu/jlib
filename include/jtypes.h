@@ -1,14 +1,17 @@
 #ifndef _J_TYPES_H_
 #define _J_TYPES_H_
 
-#define J_SHORT(X)  (*(short *)X)
-#define J_INT(X)    (*(int *)X)
-#define J_LONG(X)   (*(long *)X)
-#define J_FLOAT(X)  (*(float *)X)
-#define J_DOUBLE(X) (*(double *)X)
-#define J_USHORT(X) (*(unsigned short *)X)
-#define J_UINT(X)   (*(unsigned int *)X)
-#define J_ULONG(X)  (*(unsigned long *)X)
+#define J_SHORT(X)  (*(short *)(X))
+#define J_INT(X)    (*(int *)(X))
+#define J_LONG(X)   (*(long *)(X))
+#define J_FLOAT(X)  (*(float *)(X))
+#define J_DOUBLE(X) (*(double *)(X))
+#define J_USHORT(X) (*(unsigned short *)(X))
+#define J_UINT(X)   (*(unsigned int *)(X))
+#define J_ULONG(X)  (*(unsigned long *)(X))
+
+#define INT_TO_PTR(X) ((void *)(long)(X))
+#define PTR_TO_INT(X) ((int)(long)(X))
 
 typedef void  (*JFunc)             (void *data, void *user_data);
 typedef int   (*JCompareFunc)      (void *a, void *b);
