@@ -1,28 +1,23 @@
 #include <stdlib.h>
 #include "jqueue.h"
 
-typedef struct _j_qnode JQNode;
-
-struct _j_qnode {
-    void *data;
-    JQNode *next;
-};
-
 struct _j_queue {
     size_t length;
-    JQNode *head;
-    JQNode *tail;
+    size_t capacity;
+    size_t head;
+    size_t tail;
+    void **data;
 };
-
-static JQNode *new_node(void *data);
 
 JQueue *j_queue_new()
 {
     JQueue *queue = (JQueue *)malloc(sizeof(JQueue));
 
     queue->length = 0;
-    queue->head = NULL;
-    queue->tail = NULL;
+    queue->capacity = 1;
+    queue->head = 0;
+    queue->tail = 0;
+    queue->data = (void **)malloc(queue->capacity * sizeof(void *));
 
     return queue;
 }
@@ -32,15 +27,7 @@ void j_queue_free(JQueue *queue)
     if(queue == NULL)
         return;
 
-    JQNode *cur = queue->head;
-    JQNode *del = NULL;
-    while(cur != NULL)
-    {
-        del = cur;
-        cur = cur->next;
-        free(del);
-    }
-
+    free(queue->data);
     free(queue);
 }
 
@@ -49,16 +36,10 @@ void j_queue_free_deep(JQueue *queue, JFreeFunc func)
     if(queue == NULL || func == NULL)
         return;
 
-    JQNode *cur = queue->head;
-    JQNode *del = NULL;
-    while(cur != NULL)
-    {
-        del = cur;
-        cur = cur->next;
-        func(del->data);
-        free(del);
-    }
+    while(queue->length != 0)
+        func(j_queue_dequeue(queue));
 
+    free(queue->data);
     free(queue);
 }
 
@@ -67,19 +48,28 @@ int j_queue_enqueue(JQueue *queue, void *data)
     if(queue == NULL)
         return 0;
 
-    JQNode *node = new_node(data);
-    
-    if(queue->length == 0)
+    // if queue buff is full, realloc the buff
+    if(queue->length == queue->capacity)
     {
-        queue->head = node;
-        queue->tail = node;
+        size_t to_add = queue->capacity;
+        queue->capacity += to_add;
+        queue->data = (void **)realloc(queue->data, queue->capacity * sizeof(void *));
+
+        // if tail < head, which means we need to expand buff between tail and head
+        // by moving items start from head to the end of buff
+        if(queue->tail < queue->head)
+        {
+            queue->head += to_add;
+            for(size_t i = queue->head, j = queue->head - to_add; i < queue->capacity; i++, j++)
+                queue->data[i] = queue->data[j];
+        }
     }
-    else
-    {
-        queue->tail->next = node;
-        queue->tail = node;
-    }
-    queue->length++;
+
+    queue->tail = (queue->tail + 1) % queue->capacity;
+    queue->data[queue->tail] = data;
+
+    ++queue->length;
+
     return 1;
 }
 
@@ -88,11 +78,10 @@ void *j_queue_dequeue(JQueue *queue)
     if(queue == NULL || queue->length == 0)
         return NULL;
 
-    JQNode *del = queue->head;
-    void *data = del->data;
-    queue->head = del->next;
-    free(del);
-    queue->length--;
+    void *data = queue->data[queue->head];
+    queue->head = (queue->head + 1) % queue->capacity;
+
+    --queue->length;
 
     return data;
 }
@@ -118,7 +107,7 @@ void *j_queue_head(JQueue *queue)
     if(queue == NULL || queue->length == 0)
         return NULL;
 
-    return queue->head->data;
+    return queue->data[queue->head];
 }
 
 void *j_queue_tail(JQueue *queue)
@@ -126,15 +115,5 @@ void *j_queue_tail(JQueue *queue)
     if(queue == NULL || queue->length == 0)
         return NULL;
 
-    return queue->tail->data;
-}
-
-static JQNode *new_node(void *data)
-{
-    JQNode *node = (JQNode *)malloc(sizeof(JQNode));
-
-    node->data = data;
-    node->next = NULL;
-
-    return node;
+    return queue->data[queue->tail];
 }

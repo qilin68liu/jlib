@@ -1,29 +1,19 @@
 #include <stdlib.h>
 #include "jlist.h"
 
-typedef struct _j_lnode JLNode;
-
-struct _j_lnode {
-    void *data;
-    JLNode *prev;
-    JLNode *next;
-};
-
 struct _j_list {
     size_t length;
-    JLNode *head;
-    JLNode *tail;
+    size_t capacity;
+    void **data;
 };
-
-static JLNode *new_node(void *data);
-static void remove_node(JList *list, JLNode *node);
 
 JList *j_list_new()
 {
     JList *list = (JList *)malloc(sizeof(JList));
 
     list->length = 0;
-    list->head = list->tail = NULL;
+    list->capacity = 1;
+    list->data = (void **)malloc(list->capacity * sizeof(void *));
 
     return list;
 }
@@ -33,15 +23,7 @@ void j_list_free(JList *list)
     if(list == NULL)
         return;
 
-    JLNode *cur = list->head;
-    JLNode *del = NULL;
-    while(cur != NULL)
-    {
-        del = cur;
-        cur = cur->next;
-        free(del);
-    }
-
+    free(list->data);
     free(list);
 }
 
@@ -50,16 +32,10 @@ void j_list_free_deep(JList *list, JFreeFunc func)
     if(list == NULL || func == NULL)
         return;
 
-    JLNode *cur = list->head;
-    JLNode *del = NULL;
-    while(cur != NULL)
-    {
-        del = cur;
-        cur = cur->next;
-        func(del->data);
-        free(del);
-    }
+    for(size_t i = 0; i < list->length; i++)
+        func(list->data[i]);
 
+    free(list->data);
     free(list);
 }
 
@@ -68,18 +44,14 @@ int j_list_add(JList *list, void *data)
     if(list == NULL)
         return 0;
 
-    JLNode *node = new_node(data);
-    if(list->length == 0)
+    // if list buff is full, realloc the buff
+    if(list->length == list->capacity)
     {
-        list->head = list->tail = node;
+        list->capacity *= 2;
+        list->data = (void **)realloc(list->data, list->capacity * sizeof(void *));
     }
-    else
-    {
-        list->tail->next = node;
-        node->prev = list->tail;
-        list->tail = node;
-    }
-    list->length++;
+
+    list->data[list->length++] = data;
     return 1;
 }
 
@@ -88,21 +60,17 @@ JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data)
     if(list == NULL || func == NULL)
         return NULL;
 
+    int first = -1; // the first NULL in list
     JList *removed = j_list_new();
-    JLNode *cur = list->head;
-    JLNode *del = NULL;
-    while(cur != NULL)
+
+    for(size_t i = 0; i < list->length; i++)
     {
-        if(func(cur->data, user_data))
+        if(func(list->data[i], user_data))
         {
-            del = cur;
-            cur = cur->next;
-            j_list_add(removed, del->data);
-            remove_node(list, del);
-        }
-        else
-        {
-            cur = cur->next;
+            if(first == -1)
+                first = i;
+            j_list_add(removed, list->data[i]);
+            list->data[i] = NULL;
         }
     }
 
@@ -112,6 +80,17 @@ JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data)
         return NULL;
     }
 
+    // since some data has been removed, we need to reorder the list
+    for(size_t i = first + 1; i < list->length; i++)
+    {
+        if(list->data[i] != NULL)
+        {
+            list->data[first++] = list->data[i];
+            list->data[i] = NULL;
+        }
+    }
+    list->length -= removed->length;
+
     return removed;
 }
 
@@ -120,24 +99,35 @@ int j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JF
     if(list == NULL || pfunc == NULL || ffunc == NULL)
         return 0;
 
-    int count = 0;
-    JLNode *cur = list->head;
-    JLNode *del = NULL;
-    while(cur != NULL)
+    int first = -1; // the first NULL in list
+    size_t count = 0;
+
+    for(size_t i = 0; i < list->length; i++)
     {
-        if(pfunc(cur->data, user_data))
+        if(pfunc(list->data[i], user_data))
         {
-            del = cur;
-            cur = cur->next;
-            ffunc(del->data);
-            remove_node(list, del);
-            count++;
-        }
-        else
-        {
-            cur = cur->next;
+            if(first == -1)
+                first = i;
+            ffunc(list->data[i]);
+            list->data[i] = NULL;
+            ++count;
         }
     }
+
+    // since some data has been removed, we need to reorder the list
+    if(first != -1)
+    {
+        for(size_t i = first + 1; i < list->length; i++)
+        {
+            if(list->data[i] != NULL)
+            {
+                list->data[first++] = list->data[i];
+                list->data[i] = NULL;
+            }
+        }
+    }
+
+    list->length -= count;
 
     return count;
 }
@@ -147,12 +137,8 @@ void j_list_foreach(JList *list, JFunc func, void *user_data)
     if(list == NULL || func == NULL)
         return;
 
-    JLNode *cur = list->head;
-    while(cur != NULL)
-    {
-        func(cur->data, user_data);
-        cur = cur->next;
-    }
+    for(size_t i = 0; i < list->length; i++)
+        func(list->data[i], user_data);
 }
 
 void *j_list_search(JList *list, JCompareFunc func, void *data)
@@ -160,14 +146,11 @@ void *j_list_search(JList *list, JCompareFunc func, void *data)
     if(list == NULL || func == NULL)
         return NULL;
 
-    JLNode *cur = list->head;
-    while(cur != NULL && func(cur->data, data) != 0)
-        cur = cur->next;
+    for(size_t i = 0; i < list->length; i++)
+        if(func(list->data[i], data))
+            return list->data[i];
 
-    if(cur == NULL)
-        return NULL;
-
-    return cur->data;
+    return NULL;
 }
 
 int j_list_empty(JList *list)
@@ -191,7 +174,7 @@ void *j_list_head(JList *list)
     if(list == NULL)
         return NULL;
 
-    return list->head->data;
+    return list->data[0];
 }
 
 void *j_list_tail(JList *list)
@@ -199,7 +182,7 @@ void *j_list_tail(JList *list)
     if(list == NULL)
         return NULL;
 
-    return list->tail->data;
+    return list->data[list->length - 1];
 }
 
 JList *j_list_copy(JList *list)
@@ -208,12 +191,9 @@ JList *j_list_copy(JList *list)
         return NULL;
 
     JList *new_list = j_list_new();
-    JLNode *cur = list->head;
-    while(cur != NULL)
-    {
-        j_list_add(new_list, cur->data);
-        cur = cur->next;
-    }
+
+    for(size_t i = 0; i < list->length; i++)
+        j_list_add(new_list, list->data[i]);
 
     return new_list;
 }
@@ -224,53 +204,12 @@ JList *j_list_copy_deep(JList *list, JCopyFunc func)
         return NULL;
 
     JList *new_list = j_list_new();
-    JLNode *cur = list->head;
-    while(cur != NULL)
+
+    for(size_t i = 0; i < list->length; i++)
     {
-        void *data = func(cur->data);
+        void *data = func(list->data[i]);
         j_list_add(new_list, data);
-        cur = cur->next;
     }
 
     return new_list;
-}
-
-static JLNode *new_node(void *data)
-{
-    JLNode *node = (JLNode *)malloc(sizeof(JLNode));
-
-    node->data = data;
-    node->prev = NULL;
-    node->next = NULL;
-
-    return node;
-}
-
-static void remove_node(JList *list, JLNode *node)
-{
-    if(node == NULL)
-        return;
-
-    if(list->head == node && list->tail == node)
-    {
-        list->head = list->tail = NULL;
-    }
-    else if(list->head == node)
-    {
-        list->head = list->head->next;
-        list->head->prev = NULL;
-    }
-    else if(list->tail == node)
-    {
-        list->tail = list->tail->prev;
-        list->tail->next = NULL;
-    }
-    else
-    {
-        node->prev->next = node->next;
-        node->next->prev = node->prev;
-    }
-
-    free(node);
-    list->length--;
 }

@@ -1,26 +1,19 @@
 #include <stdlib.h>
 #include "jstack.h"
 
-typedef struct _j_snode JSNode;
-
-struct _j_snode {
-    void *data;
-    JSNode *next;
-};
-
 struct _j_stack {
     size_t length;
-    JSNode *head;
+    size_t capacity;
+    void **data;
 };
-
-static JSNode *new_node(void *data);
 
 JStack *j_stack_new()
 {
     JStack *stack = (JStack *)malloc(sizeof(JStack));
 
     stack->length = 0;
-    stack->head = NULL;
+    stack->capacity = 1;
+    stack->data = (void **)malloc(stack->capacity * sizeof(void *));
 
     return stack;
 }
@@ -30,15 +23,7 @@ void j_stack_free(JStack *stack)
     if(stack == NULL)
         return;
 
-    JSNode *cur = stack->head;
-    JSNode *del = NULL;
-    while(cur != NULL)
-    {
-        del = cur;
-        cur = cur->next;
-        free(del);
-    }
-
+    free(stack->data);
     free(stack);
 }
 
@@ -47,16 +32,10 @@ void j_stack_free_deep(JStack *stack, JFreeFunc func)
     if(stack == NULL || func == NULL)
         return;
 
-    JSNode *cur = stack->head;
-    JSNode *del = NULL;
-    while(cur != NULL)
-    {
-        del = cur;
-        cur = cur->next;
-        func(del->data);
-        free(del);
-    }
+    for(size_t i = 0; i < stack->length; i++)
+        func(stack->data[i]);
 
+    free(stack->data);
     free(stack);
 }
 
@@ -65,17 +44,14 @@ int j_stack_push(JStack *stack, void *data)
     if(stack == NULL)
         return 0;
 
-    JSNode *node = new_node(data);
-    if(stack->length == 0)
+    // if stack buff is full, realloc the buff
+    if(stack->length == stack->capacity)
     {
-        stack->head = node;
+        stack->capacity *= 2;
+        stack->data = (void **)realloc(stack->data, stack->capacity * sizeof(void *));
     }
-    else
-    {
-        node->next = stack->head;
-        stack->head = node;
-    }
-    stack->length++;
+
+    stack->data[stack->length++] = data;
     return 1;
 }
 
@@ -84,13 +60,7 @@ void *j_stack_pop(JStack *stack)
     if(stack == NULL || stack->length == 0)
         return NULL;
 
-    JSNode *del = stack->head;
-    void *data = del->data;
-    stack->head = del->next;
-    free(del);
-    stack->length--;
-
-    return data;
+    return stack->data[--stack->length];
 }
 
 size_t j_stack_length(JStack *stack)
@@ -114,15 +84,5 @@ void *j_stack_top(JStack *stack)
     if(stack == NULL || stack->length == 0)
         return NULL;
 
-    return stack->head->data;
-}
-
-static JSNode *new_node(void *data)
-{
-    JSNode *node = (JSNode *)malloc(sizeof(JSNode));
-
-    node->data = data;
-    node->next = NULL;
-
-    return node;
+    return stack->data[stack->length - 1];
 }
