@@ -55,6 +55,29 @@ int j_list_add(JList *list, void *data)
     return 1;
 }
 
+void *j_list_nth(JList *list, size_t n)
+{
+    if(list == NULL || n < 0 || n >= list->length)
+        return NULL;
+
+    return list->data[n];
+}
+
+void *j_list_remove_nth(JList *list, size_t n)
+{
+    if(list == NULL || n < 0 || n >= list->length)
+        return NULL;
+
+    void *data = list->data[n];
+    list->data[n] = NULL;
+
+    for(size_t i = n; i < list->length - 1; i++)
+        list->data[i] = list->data[i + 1];
+
+    --list->length;
+    return data;
+}
+
 JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data)
 {
     if(list == NULL || func == NULL)

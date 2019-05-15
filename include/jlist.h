@@ -13,6 +13,8 @@ void   j_list_free_deep(JList *list, JFreeFunc func);
 
 // Basic Operations
 int    j_list_add(JList *list, void *data);
+void  *j_list_nth(JList *list, size_t n);
+void  *j_list_remove_nth(JList *list, size_t n);
 JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data);
 int    j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc);
 void   j_list_foreach(JList *list, JFunc func, void *user_data);
