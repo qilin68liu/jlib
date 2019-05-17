@@ -9,6 +9,7 @@
 #define BUFF_SIZE 128
 
 #define CANNOT_FIND     "Error: Cannot Find Property"
+#define NO_SECTION      "Error: No Section Found"
 #define INVALID_FILE    "Error: Cannot Open File"
 #define INVALID_FORMAT  "Error: Invalid Config Format"
 #define INVALID_LINE    "Error: Section/Property/Comment Too Long"
@@ -89,6 +90,11 @@ JInit *j_init_new(char *file)
                     // do nothing:
                     break;
                 case PAIR:
+                    if(j_list_tail(list) == NULL)
+                    {
+                        fprintf(stderr, "%s (at line %u)\n", NO_SECTION, line_num);
+                        goto error;
+                    }
                     property = make_property(BUFF);
                     if(!j_list_search(((Section *)j_list_tail(list))->properties, (JCompareFunc)search_property, property->name))
                         j_list_add(((Section *)j_list_tail(list))->properties, property);

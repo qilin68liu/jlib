@@ -194,7 +194,7 @@ size_t j_list_length(JList *list)
 
 void *j_list_head(JList *list)
 {
-    if(list == NULL)
+    if(list == NULL || list->length == 0)
         return NULL;
 
     return list->data[0];
@@ -202,7 +202,7 @@ void *j_list_head(JList *list)
 
 void *j_list_tail(JList *list)
 {
-    if(list == NULL)
+    if(list == NULL || list->length == 0)
         return NULL;
 
     return list->data[list->length - 1];
