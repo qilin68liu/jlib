@@ -10,7 +10,7 @@
 
 static char BUFF[BUFF_SIZE];
 
-char *j_read_string(char *prompt)
+char *j_input_string(char *prompt)
 {
     int i = 0;
     char ch;
@@ -30,7 +30,7 @@ char *j_read_string(char *prompt)
     return str;
 }
 
-int j_read_integer(char *prompt)
+int j_input_integer(char *prompt)
 {
     int i;
     char ch;
@@ -54,7 +54,7 @@ int j_read_integer(char *prompt)
     return atoi(BUFF);
 }
 
-double j_read_double(char *prompt)
+double j_input_decimal(char *prompt)
 {
     int i;
     char ch;
@@ -78,7 +78,7 @@ double j_read_double(char *prompt)
     return strtod(BUFF, NULL);
 }
 
-char j_read_single_choice(char *candidates, char *prompt)
+char j_input_single_choice(char *candidates, char *prompt)
 {
     int i;
     char ch;
@@ -102,7 +102,7 @@ char j_read_single_choice(char *candidates, char *prompt)
     return BUFF[0];
 }
 
-char *j_read_multiple_choice(char *candidates, char *prompt)
+char *j_input_multiple_choice(char *candidates, char *prompt)
 {
     int i;
     char ch;

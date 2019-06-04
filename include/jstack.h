@@ -18,6 +18,6 @@ void   *j_stack_pop(JStack *stack);
 // Stack Properties
 size_t  j_stack_length(JStack *stack);
 int     j_stack_empty(JStack *stack);
-void    *j_stack_top(JStack *stack);
+void   *j_stack_top(JStack *stack);
 
 #endif // !_J_STACK_H
