@@ -185,7 +185,7 @@ int j_init_get_string_property(JInit *init, char *section, char *property, char 
     if(value == NULL)
         return 0;
 
-    char *new_str = (char *)malloc(sizeof(value) + 1);
+    char *new_str = (char *)malloc(strlen(value) + 1);
     strcpy(new_str, value);
     *str = new_str;
     return 1;
@@ -248,11 +248,7 @@ static int valid_section(char *str)
 
 static int valid_property(char *str)
 {
-    // first & last should not be empty
-    if(isspace(str[0]) || isspace(str[strlen(str) - 1]))
-        return 0;
-
-    // should contain one =
+    // should contain one and only one '='
     int e = 0;
     char *s = str;
     while(*s != '\0')
