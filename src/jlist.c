@@ -7,6 +7,9 @@ struct _j_list {
     void **data;
 };
 
+static void sort_list(void **data, int start, int end, JCompareFunc func);
+static int sort_helper(void **data, int start, int end, JCompareFunc func);
+
 JList *j_list_new()
 {
     JList *list = (JList *)malloc(sizeof(JList));
@@ -192,16 +195,26 @@ void j_list_foreach(JList *list, JFunc func, void *user_data)
         func(list->data[i], user_data);
 }
 
-void *j_list_search(JList *list, JCompareFunc func, void *data)
+void *j_list_search(JList *list, JPredicateFunc func, void *user_data)
 {
     if(list == NULL || func == NULL)
         return NULL;
 
     for(size_t i = 0; i < list->length; i++)
-        if(func(list->data[i], data))
+        if(func(list->data[i], user_data))
             return list->data[i];
 
     return NULL;
+}
+
+int j_list_sort(JList *list, JCompareFunc func, void *user_data)
+{
+    if(list == NULL || func == NULL)
+        return 0;
+
+    sort_list(list->data, 0, list->length - 1, func);
+
+    return 1;
 }
 
 int j_list_empty(JList *list)
@@ -263,4 +276,38 @@ JList *j_list_copy_deep(JList *list, JCopyFunc func)
     }
 
     return new_list;
+}
+
+static void sort_list(void **data, int start, int end, JCompareFunc func)
+{
+    if(start < end)
+    {
+        int mid = sort_helper(data, start, end, func);
+        sort_list(data, start, mid - 1, func);
+        sort_list(data, mid + 1, end, func);
+    }
+}
+
+static int sort_helper(void **data, int start, int end, JCompareFunc func)
+{
+    void *key = data[end];
+    void *tmp = NULL;
+
+    int i = start - 1;
+    for(int j = start; j < end; j++)
+    {
+        if(func(data[j], key))
+        {
+            ++i;
+            tmp = data[i];
+            data[i] = data[j];
+            data[j] = tmp;
+        }
+    }
+
+    tmp = data[i + 1];
+    data[i + 1] = data[end];
+    data[end] = tmp;
+
+    return i + 1;
 }

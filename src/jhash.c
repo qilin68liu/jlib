@@ -108,12 +108,12 @@ int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, J
     return count;
 }
 
-void *j_hash_search(JHash *table, JCompareFunc func, void *data)
+void *j_hash_search(JHash *table, JPredicateFunc func, void *user_data)
 {
     if(table == NULL || func == NULL)
         return NULL;
 
-    return j_list_search(table->table[table->hash_func(data)], func, data);
+    return j_list_search(table->table[table->hash_func(user_data)], func, user_data);
 }
 
 void j_hash_foreach(JHash *table, JFunc func, void *user_data)

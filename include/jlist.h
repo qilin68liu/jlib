@@ -20,7 +20,8 @@ void  *j_list_remove_nth(JList *list, size_t n);
 JList *j_list_remove_if(JList *list, JPredicateFunc func, void *user_data);
 int    j_list_remove_deep_if(JList *list, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc);
 void   j_list_foreach(JList *list, JFunc func, void *user_data);
-void  *j_list_search(JList *list, JCompareFunc func, void *data);
+void  *j_list_search(JList *list, JPredicateFunc func, void *user_data);
+int    j_list_sort(JList *list, JCompareFunc func, void *data);
 
 // List Properties
 int    j_list_empty(JList *list);
