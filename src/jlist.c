@@ -55,12 +55,40 @@ int j_list_add(JList *list, void *data)
     return 1;
 }
 
-void *j_list_nth(JList *list, size_t n)
+void *j_list_get_nth(JList *list, size_t n)
 {
     if(list == NULL || n < 0 || n >= list->length)
         return NULL;
 
     return list->data[n];
+}
+
+int j_list_set_nth(JList *list, size_t n, void *data)
+{
+    if(list == NULL || n < 0 || n >= list->length)
+        return 0;
+
+    list->data[n] = data;
+    return 1;
+}
+
+int j_list_insert_nth(JList *list, size_t n, void *data)
+{
+    if(list == NULL || n < 0 || n >= list->length)
+        return 0;
+
+    if(list->length == list->capacity)
+    {
+        list->capacity *= 2;
+        list->data = (void *)realloc(list->data, list->capacity * sizeof(void *));
+    }
+
+    for(size_t i = list->length - 1; i >= n; i--)
+        list->data[i + 1] = list->data[i];
+    list->data[n] = data;
+
+    ++list->length;
+    return 1;
 }
 
 void *j_list_remove_nth(JList *list, size_t n)

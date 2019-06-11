@@ -303,8 +303,8 @@ static Section *make_section(char *str)
 static Property *make_property(char *str)
 {
     JList *list = j_string_split(str, "=");
-    char *property = j_string_trim(j_list_nth(list, 0));
-    char *value = j_string_trim(j_list_nth(list, 1));
+    char *property = j_string_trim(j_list_get_nth(list, 0));
+    char *value = j_string_trim(j_list_get_nth(list, 1));
     j_list_free_deep(list, free);
 
     return property_new(property, value);
