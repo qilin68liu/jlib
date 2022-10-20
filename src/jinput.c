@@ -10,8 +10,7 @@
 
 static char BUFF[BUFF_SIZE];
 
-char *j_input_string(char *prompt)
-{
+char *j_input_string(char *prompt) {
     int i = 0;
     char ch;
 
@@ -30,13 +29,11 @@ char *j_input_string(char *prompt)
     return str;
 }
 
-int j_input_integer(char *prompt)
-{
+int j_input_integer(char *prompt) {
     int i;
     char ch;
 
-    while(1)
-    {
+    while(1) {
         i = 0;
 
         if(prompt != NULL)
@@ -54,13 +51,11 @@ int j_input_integer(char *prompt)
     return atoi(BUFF);
 }
 
-double j_input_decimal(char *prompt)
-{
+double j_input_decimal(char *prompt) {
     int i;
     char ch;
 
-    while(1)
-    {
+    while(1) {
         i = 0;
 
         if(prompt != NULL)
@@ -78,13 +73,11 @@ double j_input_decimal(char *prompt)
     return strtod(BUFF, NULL);
 }
 
-char j_input_single_choice(char *candidates, char *prompt)
-{
+char j_input_single_choice(char *candidates, char *prompt) {
     int i;
     char ch;
 
-    while(1)
-    {
+    while(1) {
         i = 0;
 
         if(prompt != NULL)
@@ -102,13 +95,11 @@ char j_input_single_choice(char *candidates, char *prompt)
     return BUFF[0];
 }
 
-char *j_input_multiple_choice(char *candidates, char *prompt)
-{
+char *j_input_multiple_choice(char *candidates, char *prompt) {
     int i;
     char ch;
 
-    while(1)
-    {
+    while(1) {
         i = 0;
 
         if(prompt != NULL)
@@ -118,10 +109,8 @@ char *j_input_multiple_choice(char *candidates, char *prompt)
         BUFF[i] = '\0';
 
         int all_in = 1;
-        for(int j = 0; j < i; j++)
-        {
-            if(strchr(candidates, BUFF[j]) == NULL)
-            {
+        for(int j = 0; j < i; j++) {
+            if(strchr(candidates, BUFF[j]) == NULL) {
                 all_in = 0;
                 break;
             }

@@ -7,8 +7,7 @@ struct _j_stack {
     void **data;
 };
 
-JStack *j_stack_new()
-{
+JStack *j_stack_new() {
     JStack *stack = (JStack *)malloc(sizeof(JStack));
 
     stack->length = 0;
@@ -18,8 +17,7 @@ JStack *j_stack_new()
     return stack;
 }
 
-void j_stack_free(JStack *stack)
-{
+void j_stack_free(JStack *stack) {
     if(stack == NULL)
         return;
 
@@ -27,8 +25,7 @@ void j_stack_free(JStack *stack)
     free(stack);
 }
 
-void j_stack_free_deep(JStack *stack, JFreeFunc func)
-{
+void j_stack_free_deep(JStack *stack, JFreeFunc func) {
     if(stack == NULL || func == NULL)
         return;
 
@@ -39,14 +36,12 @@ void j_stack_free_deep(JStack *stack, JFreeFunc func)
     free(stack);
 }
 
-int j_stack_push(JStack *stack, void *data)
-{
+int j_stack_push(JStack *stack, void *data) {
     if(stack == NULL)
         return 0;
 
     // if stack buff is full, realloc the buff
-    if(stack->length == stack->capacity)
-    {
+    if(stack->length == stack->capacity) {
         stack->capacity *= 2;
         stack->data = (void **)realloc(stack->data, stack->capacity * sizeof(void *));
     }
@@ -55,32 +50,28 @@ int j_stack_push(JStack *stack, void *data)
     return 1;
 }
 
-void *j_stack_pop(JStack *stack)
-{
+void *j_stack_pop(JStack *stack) {
     if(stack == NULL || stack->length == 0)
         return NULL;
 
     return stack->data[--stack->length];
 }
 
-size_t j_stack_length(JStack *stack)
-{
+size_t j_stack_length(JStack *stack) {
     if(stack == NULL)
         return 0;
 
     return stack->length;
 }
 
-int j_stack_empty(JStack *stack)
-{
+int j_stack_empty(JStack *stack) {
     if(stack == NULL || stack->length == 0)
         return 1;
 
     return 0;
 }
 
-void *j_stack_top(JStack *stack)
-{
+void *j_stack_top(JStack *stack) {
     if(stack == NULL || stack->length == 0)
         return NULL;
 

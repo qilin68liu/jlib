@@ -10,8 +10,7 @@ struct _j_hash {
 
 static void merge_to(void *data, void *user_data);
 
-JHash *j_hash_new(size_t length, JHashFunc hash_func)
-{
+JHash *j_hash_new(size_t length, JHashFunc hash_func) {
     JHash *table = (JHash *)malloc(sizeof(JHash));
 
     table->length = length;
@@ -25,8 +24,7 @@ JHash *j_hash_new(size_t length, JHashFunc hash_func)
     return table;
 }
 
-void j_hash_free(JHash *table)
-{
+void j_hash_free(JHash *table) {
     if(table == NULL)
         return;
 
@@ -38,8 +36,7 @@ void j_hash_free(JHash *table)
     free(table);
 }
 
-void j_hash_free_deep(JHash *table, JFreeFunc func)
-{
+void j_hash_free_deep(JHash *table, JFreeFunc func) {
     if(table == NULL || func == NULL)
         return;
 
@@ -51,16 +48,14 @@ void j_hash_free_deep(JHash *table, JFreeFunc func)
     free(table);
 }
 
-size_t j_hash_size(JHash *table)
-{
+size_t j_hash_size(JHash *table) {
     if(table == NULL)
         return 0;
 
     return table->size;
 }
 
-int j_hash_add(JHash *table, void *data)
-{
+int j_hash_add(JHash *table, void *data) {
     if(table == NULL)
         return 0;
 
@@ -70,22 +65,19 @@ int j_hash_add(JHash *table, void *data)
     return 1;
 }
 
-JList *j_hash_remove_if(JHash *table, JPredicateFunc func, void *user_data)
-{
+JList *j_hash_remove_if(JHash *table, JPredicateFunc func, void *user_data) {
     if(table == NULL || func == NULL)
         return NULL;
 
     JList *removed = j_list_new();
     JList *tmp = NULL;
-    for(int i = 0; i < table->length; i++)
-    {
+    for(int i = 0; i < table->length; i++) {
         tmp = j_list_remove_if(table->table[i], func, user_data);
         j_list_foreach(tmp, merge_to, removed);
         j_list_free(tmp);
     }
 
-    if(j_list_length(removed) == 0)
-    {
+    if(j_list_length(removed) == 0) {
         j_list_free(removed);
         return NULL;
     }
@@ -95,8 +87,7 @@ JList *j_hash_remove_if(JHash *table, JPredicateFunc func, void *user_data)
     return removed;
 }
 
-int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc)
-{
+int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, JFreeFunc ffunc) {
     if(table == NULL || pfunc == NULL || ffunc == NULL)
         return 0;
 
@@ -108,16 +99,14 @@ int j_hash_remove_deep_if(JHash *table, JPredicateFunc pfunc, void *user_data, J
     return count;
 }
 
-void *j_hash_search(JHash *table, JPredicateFunc func, void *user_data)
-{
+void *j_hash_search(JHash *table, JPredicateFunc func, void *user_data) {
     if(table == NULL || func == NULL)
         return NULL;
 
     return j_list_search(table->table[table->hash_func(user_data)], func, user_data);
 }
 
-void j_hash_foreach(JHash *table, JFunc func, void *user_data)
-{
+void j_hash_foreach(JHash *table, JFunc func, void *user_data) {
     if(table == NULL || func == NULL)
         return;
 
@@ -125,7 +114,6 @@ void j_hash_foreach(JHash *table, JFunc func, void *user_data)
         j_list_foreach(table->table[i], func, user_data);
 }
 
-static void merge_to(void *data, void *user_data)
-{
+static void merge_to(void *data, void *user_data) {
     j_list_add((JList *)user_data, data);
 }

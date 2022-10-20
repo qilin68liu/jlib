@@ -3,8 +3,7 @@
 #include <string.h>
 #include "jstring.h"
 
-char *j_string_trim(char *str)
-{
+char *j_string_trim(char *str) {
     if(str == NULL)
         return NULL;
 
@@ -24,18 +23,15 @@ char *j_string_trim(char *str)
     return new_str;
 }
 
-JList *j_string_split(char *str, char *delimeter)
-{
+JList *j_string_split(char *str, char *delimeter) {
     if(str == NULL || delimeter == NULL)
         return NULL;
 
     size_t s = 0, e = 0;
     JList *list = j_list_new();
 
-    while(e <= strlen(str))
-    {
-        if(strchr(delimeter, str[e]) != NULL || str[e] == '\0')
-        {
+    while(e <= strlen(str)) {
+        if(strchr(delimeter, str[e]) != NULL || str[e] == '\0') {
             size_t len = e - s;
             char *tmp = (char *)malloc(len + 1);
             memcpy(tmp, str + s, len);
