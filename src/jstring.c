@@ -23,12 +23,12 @@ char *j_string_trim(char *str) {
     return new_str;
 }
 
-JList *j_string_split(char *str, char *delimeter) {
+JArray *j_string_split(char *str, char *delimeter) {
     if(str == NULL || delimeter == NULL)
         return NULL;
 
     size_t s = 0, e = 0;
-    JList *list = j_list_new();
+    JArray *array = j_array_new();
 
     while(e <= strlen(str)) {
         if(strchr(delimeter, str[e]) != NULL || str[e] == '\0') {
@@ -36,11 +36,11 @@ JList *j_string_split(char *str, char *delimeter) {
             char *tmp = (char *)malloc(len + 1);
             memcpy(tmp, str + s, len);
             tmp[len] = '\0';
-            j_list_add(list, tmp);
+            j_array_add(array, tmp);
             s = e + 1;
         }
         ++e;
     }
 
-    return list;
+    return array;
 }

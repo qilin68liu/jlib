@@ -2,9 +2,9 @@
 #define _J_EVENT_H
 
 #include "jtypes.h"
-#include "jlist.h"
+#include "jarray.h"
 
-typedef JList JEvent;
+typedef JArray JEvent;
 
 JEvent *j_event_new();
 void    j_event_free(JEvent *event);

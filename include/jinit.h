@@ -1,9 +1,9 @@
 #ifndef _J_INIT_H
 #define _J_INIT_H
 
-#include "jlist.h"
+#include "jarray.h"
 
-typedef JList JInit;
+typedef JArray JInit;
 
 // Constructor and Destructor
 JInit *j_init_new(char *file);

@@ -21,7 +21,7 @@ static char BUFF[BUFF_SIZE];
 
 typedef struct _section {
     char *name;
-    JList *properties;
+    JArray *properties;
 } Section;
 
 typedef struct _property {
@@ -66,7 +66,7 @@ JInit *j_init_new(char *file) {
 
     int i = 0;
     char ch;
-    JList *list = j_list_new();
+    JArray *array = j_array_new();
     Section *sec = NULL;
     Property *property = NULL;
     unsigned line_num = 0;
@@ -85,13 +85,13 @@ JInit *j_init_new(char *file) {
                     // do nothing:
                     break;
                 case PAIR:
-                    if(j_list_tail(list) == NULL) {
+                    if(j_array_tail(array) == NULL) {
                         fprintf(stderr, "%s (at line %u)\n", NO_SECTION, line_num);
                         goto error;
                     }
                     property = make_property(BUFF);
-                    if(!j_list_search(((Section *)j_list_tail(list))->properties, (JCompareFunc)search_property, property->name))
-                        j_list_add(((Section *)j_list_tail(list))->properties, property);
+                    if(!j_array_search(((Section *)j_array_tail(array))->properties, (JCompareFunc)search_property, property->name))
+                        j_array_add(((Section *)j_array_tail(array))->properties, property);
                     else {
                         fprintf(stderr, "%s (at line %u)\n", PROPERTY_EXIST, line_num);
                         property_free(property);
@@ -100,8 +100,8 @@ JInit *j_init_new(char *file) {
                     break;
                 case SECTION:
                     sec = make_section(BUFF);
-                    if(!j_list_search(list, (JCompareFunc)search_section, sec->name))
-                        j_list_add(list, sec);
+                    if(!j_array_search(array, (JCompareFunc)search_section, sec->name))
+                        j_array_add(array, sec);
                     else {
                         fprintf(stderr, "%s (at line %u)\n", SECTION_EXIST, line_num);
                         section_free(sec);
@@ -112,7 +112,7 @@ JInit *j_init_new(char *file) {
                     fprintf(stderr, "%s (at line %u)\n", INVALID_FORMAT, line_num);
                 default:
                 error: // explicit lable used for goto
-                    j_list_free_deep(list, (JFreeFunc)section_free);
+                    j_array_free_deep(array, (JFreeFunc)section_free);
                     fclose(f);
                     return NULL;
             }
@@ -127,11 +127,11 @@ JInit *j_init_new(char *file) {
     }
 
     fclose(f);
-    return (JInit *)list;
+    return (JInit *)array;
 }
 
 void j_init_free(JInit *init) {
-    j_list_free_deep((JList *)init, (JFreeFunc)section_free);
+    j_array_free_deep((JArray *)init, (JFreeFunc)section_free);
 }
 
 int j_init_get_integer_property(JInit *init, char *section, char *property, int *num) {
@@ -179,14 +179,14 @@ int j_init_get_string_property(JInit *init, char *section, char *property, char 
 static Section *section_new(char *name) {
     Section *sec = (Section *)malloc(sizeof(Section));
     sec->name = name;
-    sec->properties = j_list_new();
+    sec->properties = j_array_new();
 
     return sec;
 }
 
 static void section_free(Section *section) {
     free(section->name);
-    j_list_free_deep(section->properties, (JFreeFunc)property_free);
+    j_array_free_deep(section->properties, (JFreeFunc)property_free);
     free(section);
 }
 
@@ -275,10 +275,10 @@ static Section *make_section(char *str) {
 }
 
 static Property *make_property(char *str) {
-    JList *list = j_string_split(str, "=");
-    char *property = j_string_trim(j_list_get_nth(list, 0));
-    char *value = j_string_trim(j_list_get_nth(list, 1));
-    j_list_free_deep(list, free);
+    JArray *array = j_string_split(str, "=");
+    char *property = j_string_trim(j_array_get_nth(array, 0));
+    char *value = j_string_trim(j_array_get_nth(array, 1));
+    j_array_free_deep(array, free);
 
     return property_new(property, value);
 }
@@ -301,13 +301,13 @@ static char *try_get_value(JInit *init, char *section, char *property) {
     if(init == NULL || section == NULL || property == NULL)
         return NULL;
 
-    Section *sec = j_list_search((JList *)init, (JCompareFunc)search_section, section);
+    Section *sec = j_array_search((JArray *)init, (JCompareFunc)search_section, section);
     if(sec == NULL) {
         fprintf(stderr, "%s [%s]->[%s]\n", CANNOT_FIND, section, property);
         return NULL;
     }
 
-    Property *p = j_list_search(sec->properties, (JCompareFunc)search_property, property);
+    Property *p = j_array_search(sec->properties, (JCompareFunc)search_property, property);
     if(p == NULL) {
         fprintf(stderr, "%s [%s]->[%s]\n", CANNOT_FIND, section, property);
         return NULL;
