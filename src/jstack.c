@@ -18,30 +18,32 @@ JStack *j_stack_new() {
 }
 
 void j_stack_free(JStack *stack) {
-    if(stack == NULL)
-        return;
-
-    free(stack->data);
-    free(stack);
+    if (stack != NULL) {
+        free(stack->data);
+        free(stack);
+    }
 }
 
 void j_stack_free_deep(JStack *stack, JFreeFunc func) {
-    if(stack == NULL || func == NULL)
+    if (stack == NULL || func == NULL) {
         return;
+    }
 
-    for(size_t i = 0; i < stack->length; i++)
+    for(size_t i = 0; i < stack->length; i++) {
         func(stack->data[i]);
+    }
 
     free(stack->data);
     free(stack);
 }
 
 int j_stack_push(JStack *stack, void *data) {
-    if(stack == NULL)
+    if (stack == NULL) {
         return 0;
+    }
 
     // if stack buff is full, realloc the buff
-    if(stack->length == stack->capacity) {
+    if (stack->length == stack->capacity) {
         stack->capacity *= 2;
         stack->data = (void **)realloc(stack->data, stack->capacity * sizeof(void *));
     }
@@ -51,29 +53,33 @@ int j_stack_push(JStack *stack, void *data) {
 }
 
 void *j_stack_pop(JStack *stack) {
-    if(stack == NULL || stack->length == 0)
+    if (stack == NULL || stack->length == 0) {
         return NULL;
+    }
 
     return stack->data[--stack->length];
 }
 
 size_t j_stack_length(JStack *stack) {
-    if(stack == NULL)
+    if (stack == NULL) {
         return 0;
+    }
 
     return stack->length;
 }
 
 int j_stack_empty(JStack *stack) {
-    if(stack == NULL || stack->length == 0)
+    if (stack == NULL || stack->length == 0) {
         return 1;
+    }
 
     return 0;
 }
 
 void *j_stack_top(JStack *stack) {
-    if(stack == NULL || stack->length == 0)
+    if (stack == NULL || stack->length == 0) {
         return NULL;
+    }
 
     return stack->data[stack->length - 1];
 }

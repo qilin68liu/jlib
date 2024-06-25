@@ -36,19 +36,27 @@ $(TARGET): $(OBJ)
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+test: $(TARGET)
+	$(AT)DEBUG=$(DEBUG) make -C test
+	$(AT)echo 'start to run test...'
+	$(AT)echo '========== RUN TEST =========='
+	$(AT)./test/bin/main
+	$(AT)echo '========== END TEST =========='
+
 install: $(TARGET)
 	$(AT)cp $(INC) $(INSTALL_INCDIR)
 	$(AT)cp $(TARGET) $(INSTALL_LIBDIR)
 	$(AT)echo "\033[32m[OK]\033[0m jlib has been installed successfully"
 
 uninstall:
-	$(AT)rm -f $(INSTALL_INC)
-	$(AT)rm -f $(INSTALL_LIB)
+	$(AT)rm -fv $(INSTALL_INC)
+	$(AT)rm -fv $(INSTALL_LIB)
 	$(AT)echo "\033[32m[OK]\033[0m jlib has been uninstalled successfully"
 
 -include $(OBJDIR)/*.d
 
 clean:
-	rm -rf $(OBJDIR)/* $(LIBDIR)/*
+	make -C test clean
+	rm -rfv $(OBJDIR)/* $(LIBDIR)/*
 
-.PHONY: all install uninstall clean
+.PHONY: all test install uninstall clean

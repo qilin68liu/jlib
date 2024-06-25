@@ -34,6 +34,13 @@ int j_int_le(void *a, void *b);
 int j_int_gt(void *a, void *b);
 int j_int_ge(void *a, void *b);
 
+int j_ptr_cm(void *a, void *b);
+int j_ptr_eq(void *a, void *b);
+int j_ptr_lt(void *a, void *b);
+int j_ptr_le(void *a, void *b);
+int j_ptr_gt(void *a, void *b);
+int j_ptr_ge(void *a, void *b);
+
 int j_double_cm(void *a, void *b);
 int j_double_eq(void *a, void *b);
 int j_double_lt(void *a, void *b);

@@ -29,115 +29,117 @@ int j_int_cm(void *a, void *b) {
 }
 
 int j_int_eq(void *a, void *b) {
-    if(J_INT(a) == J_INT(b))
-        return 1;
-
-    return 0;
+    return (J_INT(a) == J_INT(b) ? 1 : 0);
 }
 
 int j_int_lt(void *a, void *b) {
-    if(J_INT(a) < J_INT(b))
-        return 1;
-
-    return 0;
+    return (J_INT(a) < J_INT(b) ? 1 : 0);
 }
 
 int j_int_le(void *a, void *b) {
-    if(J_INT(a) <= J_INT(b))
-        return 1;
-
-    return 0;
+    return (J_INT(a) <= J_INT(b) ? 1 : 0);
 }
 
 int j_int_gt(void *a, void *b) {
-    if(J_INT(a) > J_INT(b))
-        return 1;
-
-    return 0;
+    return (J_INT(a) > J_INT(b) ? 1 : 0);
 }
 
 int j_int_ge(void *a, void *b) {
-    if(J_INT(a) >= J_INT(b))
-        return 1;
-
-    return 0;
+    return (J_INT(a) >= J_INT(b) ? 1 : 0);
 }
 
+int j_ptr_cm(void *a, void *b) {
+    return (a - b);
+}
+
+int j_ptr_eq(void *a, void *b) {
+    return (a == b ? 1 : 0);
+}
+
+int j_ptr_lt(void *a, void *b) {
+    return (a < b ? 1 : 0);
+}
+
+int j_ptr_le(void *a, void *b) {
+    return (a <= b ? 1 : 0);
+}
+
+int j_ptr_gt(void *a, void *b) {
+    return (a > b ? 1 : 0);
+}
+
+int j_ptr_ge(void *a, void *b) {
+    return (a >= b ? 1 : 0);
+}
 
 int j_double_cm(void *a, void *b) {
     return J_DOUBLE(a) - J_DOUBLE(b);
 }
 
 int j_double_eq(void *a, void *b) {
-    if(J_DOUBLE(a) == J_DOUBLE(b))
-        return 1;
-
-    return 0;
+    return (J_DOUBLE(a) == J_DOUBLE(b) ? 1 : 0);
 }
 
 int j_double_lt(void *a, void *b) {
-    if(J_DOUBLE(a) < J_DOUBLE(b))
-        return 1;
-
-    return 0;
+    return (J_DOUBLE(a) < J_DOUBLE(b) ? 1 : 0);
 }
 
 int j_double_le(void *a, void *b) {
-    if(J_DOUBLE(a) <= J_DOUBLE(b))
-        return 1;
-
-    return 0;
+    return (J_DOUBLE(a) <= J_DOUBLE(b) ? 1 : 0);
 }
 
 int j_double_gt(void *a, void *b) {
-    if(J_DOUBLE(a) > J_DOUBLE(b))
-        return 1;
-
-    return 0;
+    return (J_DOUBLE(a) > J_DOUBLE(b) ? 1 : 0);
 }
 
 int j_double_ge(void *a, void *b) {
-    if(J_DOUBLE(a) >= J_DOUBLE(b))
-        return 1;
-
-    return 0;
+    return (J_DOUBLE(a) >= J_DOUBLE(b) ? 1 : 0);
 }
 
 int j_is_integer(char *str) {
-    if(str == NULL)
+    if (str == NULL) {
         return 0;
+    }
 
     // First char should be +,- or digit.
-    if(*str != '+' && *str != '-' && !isdigit(*str))
+    if (*str != '+' && *str != '-' && !isdigit(*str)) {
         return 0;
+    }
 
-    while(*(++str) != '\0')
-        if(!isdigit(*str))
+    while (*(++str) != '\0') {
+        if (!isdigit(*str)) {
             return 0;
+        }
+    }
 
     return 1;
 }
 
 int j_is_decimal(char *str) {
-    if(str == NULL)
+    if (str == NULL) {
         return 0;
+    }
 
     // First char should be +/-/. or digit.
-    if(*str != '+' && *str != '-' && *str != '.' && !isdigit(*str))
+    if (*str != '+' && *str != '-' && *str != '.' && !isdigit(*str)) {
         return 0;
+    }
 
     int found = 0;
-    if(*str == '.')
+    if (*str == '.') {
         found = 1;
-    while(*(++str) != '\0') {
-        if(*str != '.' && !isdigit(*str))
+    }
+    while (*(++str) != '\0') {
+        if (*str != '.' && !isdigit(*str)) {
             return 0;
+        }
         // float should contain only one digit
-        if(*str == '.') {
-            if(found)
+        if (*str == '.') {
+            if (found) {
                 return 0;
-            else
+            } else {
                 found = 1;
+            }
         }
     }
 

@@ -9,3 +9,5 @@
 # Ignore below folders
 obj/
 lib/
+test/obj
+test/bin

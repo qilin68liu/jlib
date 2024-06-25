@@ -59,7 +59,7 @@ static char *try_get_value(JInit *init, char *section, char *property);
 
 JInit *j_init_new(char *file) {
     FILE *f = fopen(file, "r");
-    if(f == NULL) {
+    if (f == NULL) {
         fprintf(stderr, "%s %s\n", INVALID_FILE, file);
         return NULL;
     }
@@ -71,10 +71,11 @@ JInit *j_init_new(char *file) {
     Property *property = NULL;
     unsigned line_num = 0;
 
-    while((ch = fgetc(f)) != EOF) {
-        if(i < BUFF_SIZE - 1 && ch != '\n')
+    while ((ch = fgetc(f)) != EOF) {
+        if (i < BUFF_SIZE - 1 && ch != '\n') {
+
             BUFF[i++] = ch;
-        else if(ch == '\n') {
+        } else if (ch == '\n') {
             BUFF[i] = '\0';
             ++line_num;
 
@@ -85,14 +86,14 @@ JInit *j_init_new(char *file) {
                     // do nothing:
                     break;
                 case PAIR:
-                    if(j_array_tail(array) == NULL) {
+                    if (j_array_tail(array) == NULL) {
                         fprintf(stderr, "%s (at line %u)\n", NO_SECTION, line_num);
                         goto error;
                     }
                     property = make_property(BUFF);
-                    if(!j_array_search(((Section *)j_array_tail(array))->properties, (JCompareFunc)search_property, property->name))
+                    if (!j_array_search(((Section *)j_array_tail(array))->properties, (JCompareFunc)search_property, property->name)) {
                         j_array_add(((Section *)j_array_tail(array))->properties, property);
-                    else {
+                    } else {
                         fprintf(stderr, "%s (at line %u)\n", PROPERTY_EXIST, line_num);
                         property_free(property);
                         goto error;
@@ -100,9 +101,9 @@ JInit *j_init_new(char *file) {
                     break;
                 case SECTION:
                     sec = make_section(BUFF);
-                    if(!j_array_search(array, (JCompareFunc)search_section, sec->name))
+                    if (!j_array_search(array, (JCompareFunc)search_section, sec->name)) {
                         j_array_add(array, sec);
-                    else {
+                    } else {
                         fprintf(stderr, "%s (at line %u)\n", SECTION_EXIST, line_num);
                         section_free(sec);
                         goto error;
@@ -120,7 +121,7 @@ JInit *j_init_new(char *file) {
             i = 0;
             continue;
         }
-        else if(i >= BUFF_SIZE - 1) {
+        else if (i >= BUFF_SIZE - 1) {
             fprintf(stderr, "%s (at line %u)\n", INVALID_LINE, line_num + 1);
             goto error;
         }
@@ -137,10 +138,11 @@ void j_init_free(JInit *init) {
 int j_init_get_integer_property(JInit *init, char *section, char *property, int *num) {
     char *value = try_get_value(init, section, property);
 
-    if(value == NULL)
+    if (value == NULL) {
         return 0;
+    }
 
-    if(!j_is_integer(value)) {
+    if (!j_is_integer(value)) {
         fprintf(stderr, "%s: %s, Expect Integer.\n", INVALID_VALUE, value);
         return 0;
     }
@@ -152,10 +154,11 @@ int j_init_get_integer_property(JInit *init, char *section, char *property, int 
 int j_init_get_decimal_property(JInit *init, char *section, char *property, double *num) {
     char *value = try_get_value(init, section, property);
 
-    if(value == NULL)
+    if (value == NULL) {
         return 0;
+    }
 
-    if(!j_is_decimal(value)) {
+    if (!j_is_decimal(value)) {
         fprintf(stderr, "%s: %s, Expect Decimal.\n", INVALID_VALUE, value);
         return 0;
     }
@@ -167,8 +170,9 @@ int j_init_get_decimal_property(JInit *init, char *section, char *property, doub
 int j_init_get_string_property(JInit *init, char *section, char *property, char **str) {
     char *value = try_get_value(init, section, property);
 
-    if(value == NULL)
+    if (value == NULL) {
         return 0;
+    }
 
     char *new_str = (char *)malloc(strlen(value) + 1);
     strcpy(new_str, value);
@@ -206,21 +210,23 @@ static void property_free(Property *property) {
 
 static int valid_section(char *str) {
     // first & last character should be [ & ]
-    if(str[0] != '[' || str[strlen(str) - 1] != ']')
+    if (str[0] != '[' || str[strlen(str) - 1] != ']') {
         return 0;
+    }
 
     // should only contain one [ & ]
     int l = 0, r = 0;
-    while(*str != '\0') {
-        if(*str == '[')
+    while (*str != '\0') {
+        if (*str == '[')
             l++;
-        if(*str == ']')
+        if (*str == ']')
             r++;
         ++str;
     }
 
-    if(l != 1 || r != 1)
+    if (l != 1 || r != 1) {
         return 0;
+    }
 
     return 1;
 }
@@ -229,36 +235,38 @@ static int valid_property(char *str) {
     // should contain one and only one '='
     int e = 0;
     char *s = str;
-    while(*s != '\0') {
-        if(*(s++) == '=')
+    while (*s != '\0') {
+        if (*(s++) == '=')
             e++;
     }
 
-    if(e != 1)
+    if (e != 1) {
         return 0;
+    }
 
     return 1;
 }
 
 static int valid_comment(char *str) {
-    if(str[0] == '#')
-        return 1;
-
-    return 0;
+    return (str[0] == '#' ? 1 : 0);
 }
 
 static LineType check_type(char *str) {
-    if(strlen(str) == 0)
+    if (strlen(str) == 0) {
         return EMPTY;
+    }
 
-    if(strchr(str, '=') != NULL && valid_property(str))
+    if (strchr(str, '=') != NULL && valid_property(str)) {
         return PAIR;
+    }
 
-    if(strchr(str, '[') != NULL && valid_section(str))
+    if (strchr(str, '[') != NULL && valid_section(str)) {
         return SECTION;
+    }
 
-    if(strchr(str, '#') != NULL && valid_comment(str))
+    if (strchr(str, '#') != NULL && valid_comment(str)) {
         return COMMENT;
+    }
 
     return INVALID;
 }
@@ -284,31 +292,34 @@ static Property *make_property(char *str) {
 }
 
 static int search_section(Section *section, char *name) {
-    if(strcmp(section->name, name) == 0)
+    if (strcmp(section->name, name) == 0) {
         return 1;
+    }
 
     return 0;
 }
 
 static int search_property(Property *property, char *name) {
-    if(strcmp(property->name, name) == 0)
+    if (strcmp(property->name, name) == 0) {
         return 1;
+    }
 
     return 0;
 }
 
 static char *try_get_value(JInit *init, char *section, char *property) {
-    if(init == NULL || section == NULL || property == NULL)
+    if (init == NULL || section == NULL || property == NULL) {
         return NULL;
+    }
 
     Section *sec = j_array_search((JArray *)init, (JCompareFunc)search_section, section);
-    if(sec == NULL) {
+    if (sec == NULL) {
         fprintf(stderr, "%s [%s]->[%s]\n", CANNOT_FIND, section, property);
         return NULL;
     }
 
     Property *p = j_array_search(sec->properties, (JCompareFunc)search_property, property);
-    if(p == NULL) {
+    if (p == NULL) {
         fprintf(stderr, "%s [%s]->[%s]\n", CANNOT_FIND, section, property);
         return NULL;
     }
