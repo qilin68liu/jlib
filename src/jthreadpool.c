@@ -7,10 +7,9 @@
 typedef void (*ThreadPoolTaskFunc)(void *, void *);
 
 struct _j_threadpool_task {
-    JFunc   func;
-    int     priority;
-    void   *data;
-    void   *user_data;
+    JThreadPoolTaskFunc func;
+    int                 priority;
+    void               *data;
 };
 
 struct _j_threadpool {
@@ -45,18 +44,20 @@ static void *thread_func(void *data) {
         pthread_mutex_unlock(&pool->locker);
 
         // run task
-        task->func(task->data, task->user_data);
+        task->func(task->data);
+
+        // free task
+        free(task);
     }
 
     return NULL;
 }
 
-JThreadPoolTask *j_threadpool_task_new(JFunc func, void *data, void *user_data, int priority) {
+JThreadPoolTask *j_threadpool_task_new(JThreadPoolTaskFunc func, void *data, int priority) {
     JThreadPoolTask *task = (JThreadPoolTask *)malloc(sizeof(JThreadPoolTask));
 
     task->func = func;
     task->data = data;
-    task->user_data = user_data;
     task->priority = priority;
 
     return task;

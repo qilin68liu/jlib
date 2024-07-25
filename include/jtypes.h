@@ -13,13 +13,14 @@
 #define SIZE_TO_PTR(X) ((void *)(unsigned long)(X))
 #define PTR_TO_SIZE(X) ((unsigned long)(X))
 
-typedef void  (*JFunc)             (void *data, void *user_data);
-typedef int   (*JCompareFunc)      (void *a, void *b);
-typedef int   (*JPredicateFunc)    (void *data, void *user_data);
-typedef void  (*JFreeFunc)         (void *data);
-typedef void *(*JCopyFunc)         (void *data);
-typedef void  (*JEventHandlerFunc) (void *object, void *user_data);
-typedef int   (*JHashFunc)         (void *data);
+typedef int   (*JCompareFunc)        (void *a, void *b);
+typedef int   (*JHashFunc)           (void *data);
+typedef int   (*JPredicateFunc)      (void *data, void *user_data);
+typedef void  (*JEventHandlerFunc)   (void *object, void *user_data);
+typedef void  (*JFreeFunc)           (void *data);
+typedef void  (*JFunc)               (void *data, void *user_data);
+typedef void  (*JThreadPoolTaskFunc) (void *data);
+typedef void *(*JCopyFunc)           (void *data);
 
 // Define some basic data creation for convenience
 int    *j_int_new(int num);

@@ -7,9 +7,10 @@
 typedef struct _j_threadpool_task   JThreadPoolTask;
 typedef struct _j_threadpool        JThreadPool;
 
-JThreadPoolTask *j_threadpool_task_new(JFunc func, void *data, void *user_data, int priority);
+// ThreadPoolTask constructor
+JThreadPoolTask *j_threadpool_task_new(JThreadPoolTaskFunc func, void *data, int priority);
 
-// Constructor and Destructor
+// ThreadPool constructor and Destructor
 JThreadPool *j_threadpool_new(size_t thread_num);
 void         j_threadpool_free(JThreadPool *pool);
 

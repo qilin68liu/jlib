@@ -4,27 +4,22 @@
 #include "jtypes.h"
 #include "jthreadpool.h"
 
-static void print_num(void *data, void *user_data) {
+static void print_num(void *data) {
+    usleep(20000);
     printf("%ld\n", PTR_TO_SIZE(data));
 }
 
 int main(void) {
     JThreadPool *pool = j_threadpool_new(10);
 
-    const size_t task_num = 10;
-    JThreadPoolTask *tasks[task_num];
-
+    const size_t task_num = 100;
     for (size_t i = 0; i < task_num; ++i) {
-        tasks[i] = j_threadpool_task_new(print_num, SIZE_TO_PTR(i), NULL, i);
-        j_threadpool_add_task(pool, tasks[i]);
+        JThreadPoolTask *task = j_threadpool_task_new(print_num, SIZE_TO_PTR(i), i);
+        j_threadpool_add_task(pool, task);
     }
 
     j_threadpool_shutdown(pool);
     j_threadpool_free(pool);
-
-    for (size_t i = 0; i < task_num; ++i) {
-        free(tasks[i]);
-    }
 
     return 0;
 }
