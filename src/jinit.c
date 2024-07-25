@@ -248,7 +248,7 @@ static int valid_property(char *str) {
 }
 
 static int valid_comment(char *str) {
-    return (str[0] == '#' ? 1 : 0);
+    return str[0] == '#';
 }
 
 static LineType check_type(char *str) {

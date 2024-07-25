@@ -1,25 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <unistd.h>
 #include "jtypes.h"
-#include "jprequeue.h"
+#include "jthreadpool.h"
+
+static void print_num(void *data, void *user_data) {
+    printf("%d\n", PTR_TO_INT(data));
+}
 
 int main(void) {
-    JPreQueue *prequeue = j_prequeue_new(j_ptr_gt);
+    JThreadPool *pool = j_threadpool_new(10);
 
-    const int max = 100000;
-    for (int i = 1; i <= max; ++i)
-        j_prequeue_push(prequeue, INT_TO_PTR(i));
+    const size_t task_num = 10;
+    JThreadPoolTask *tasks[task_num];
 
-    for (int i = max; i >= 1; --i) {
-        void *data = j_prequeue_pop(prequeue);
-        if (PTR_TO_INT(data) != i) {
-            printf("error\n");
-        }
+    for (size_t i = 0; i < task_num; ++i) {
+        tasks[i] = j_threadpool_task_new(print_num, INT_TO_PTR(i), NULL, i);
+        j_threadpool_add_task(pool, tasks[i]);
     }
 
-    printf("pass\n");
-    j_prequeue_free(prequeue);
+    j_threadpool_shutdown(pool);
+    j_threadpool_free(pool);
+
+    for (size_t i = 0; i < task_num; ++i) {
+        free(tasks[i]);
+    }
 
     return 0;
 }

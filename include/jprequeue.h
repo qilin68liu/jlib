@@ -13,7 +13,7 @@ void       j_prequeue_free_deep(JPreQueue *prequeue, JFreeFunc free_func);
 
 // Basic Operations
 void *j_prequeue_pop(JPreQueue *prequeue);
-void  j_prequeue_push(JPreQueue *prequeue, void *data);
+int   j_prequeue_push(JPreQueue *prequeue, void *data);
 
 // JPreQueue Properties
 size_t  j_prequeue_length(JPreQueue *prequeue);

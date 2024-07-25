@@ -59,9 +59,9 @@ void *j_prequeue_pop(JPreQueue *prequeue) {
     return result;
 }
 
-void j_prequeue_push(JPreQueue *prequeue, void *data) {
+int j_prequeue_push(JPreQueue *prequeue, void *data) {
     if (prequeue == NULL) {
-        return;
+        return 0;
     }
 
     if (prequeue->length == prequeue->capacity) {
@@ -82,6 +82,8 @@ void j_prequeue_push(JPreQueue *prequeue, void *data) {
         prequeue->data[new_index] = tmp;
         new_index = parent;
     }
+
+    return 1;
 }
 
 size_t j_prequeue_length(JPreQueue *prequeue) {

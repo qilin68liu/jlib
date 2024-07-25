@@ -9,7 +9,7 @@ struct _j_event_handler {
 };
 
 static JEventHandler *new_handler(JEventHandlerFunc func, void *user_data);
-static int find(JEventHandler *a, JEventHandlerFunc func);
+static int func_eq(JEventHandler *a, JEventHandlerFunc func);
 static void call(JEventHandler *handler, void *user_data);
 
 JEvent *j_event_new() {
@@ -38,7 +38,7 @@ int j_event_unregister(JEvent *event, JEventHandlerFunc func) {
         return 0;
     }
 
-    return j_array_remove_deep_if(event, (JPredicateFunc)find, func, (JFreeFunc)free);
+    return j_array_remove_deep_if(event, (JPredicateFunc)func_eq, func, (JFreeFunc)free);
 }
 
 int j_event_invoke(void *object, JEvent *event) {
@@ -57,8 +57,8 @@ static JEventHandler *new_handler(JEventHandlerFunc func, void *user_data) {
     return handler;
 }
 
-static int find(JEventHandler *a, JEventHandlerFunc func) {
-    return (a->func == func ? 1 : 0);
+static int func_eq(JEventHandler *a, JEventHandlerFunc func) {
+    return a->func == func;
 }
 
 static void call(JEventHandler *handler, void *user_data) {
