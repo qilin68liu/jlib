@@ -5,7 +5,7 @@
 #include "jthreadpool.h"
 
 static void print_num(void *data, void *user_data) {
-    printf("%d\n", PTR_TO_INT(data));
+    printf("%ld\n", PTR_TO_SIZE(data));
 }
 
 int main(void) {
@@ -15,7 +15,7 @@ int main(void) {
     JThreadPoolTask *tasks[task_num];
 
     for (size_t i = 0; i < task_num; ++i) {
-        tasks[i] = j_threadpool_task_new(print_num, INT_TO_PTR(i), NULL, i);
+        tasks[i] = j_threadpool_task_new(print_num, SIZE_TO_PTR(i), NULL, i);
         j_threadpool_add_task(pool, tasks[i]);
     }
 

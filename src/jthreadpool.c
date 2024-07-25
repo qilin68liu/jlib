@@ -79,21 +79,20 @@ JThreadPool *j_threadpool_new(size_t thread_num) {
     return pool;
 }
 
+void j_threadpool_free(JThreadPool *pool) {
+    j_prequeue_free(pool->prequeue);
+    pthread_cond_destroy(&pool->not_empty);
+    pthread_mutex_destroy(&pool->locker);
+    free(pool->threads);
+    free(pool);
+}
+
 void j_threadpool_shutdown(JThreadPool *pool) {
     pool->shutdown = 1;
     pthread_cond_broadcast(&pool->not_empty);
     for (size_t i = 0; i < pool->thread_num; ++i) {
         pthread_join(pool->threads[i], NULL);
     }
-}
-
-void j_threadpool_free(JThreadPool *pool) {
-    // j_threadpool_shutdown(pool);
-    j_prequeue_free(pool->prequeue);
-    pthread_cond_destroy(&pool->not_empty);
-    pthread_mutex_destroy(&pool->locker);
-    free(pool->threads);
-    free(pool);
 }
 
 void j_threadpool_add_task(JThreadPool *pool, JThreadPoolTask *task) {

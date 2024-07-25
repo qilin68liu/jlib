@@ -10,8 +10,8 @@
 #define J_UINT(X)   (*(unsigned int *)(X))
 #define J_ULONG(X)  (*(unsigned long *)(X))
 
-#define INT_TO_PTR(X) ((void *)(long)(X))
-#define PTR_TO_INT(X) ((int)(long)(X))
+#define SIZE_TO_PTR(X) ((void *)(unsigned long)(X))
+#define PTR_TO_SIZE(X) ((unsigned long)(X))
 
 typedef void  (*JFunc)             (void *data, void *user_data);
 typedef int   (*JCompareFunc)      (void *a, void *b);
