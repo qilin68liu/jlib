@@ -25,6 +25,16 @@ static int task_compare(void *a, void *b) {
     return ((JThreadPoolTask *)a)->priority < ((JThreadPoolTask *)b)->priority;
 }
 
+static JThreadPoolTask *j_threadpool_task_new(JThreadPoolTaskFunc func, void *data, int priority) {
+    JThreadPoolTask *task = (JThreadPoolTask *)malloc(sizeof(JThreadPoolTask));
+
+    task->func = func;
+    task->data = data;
+    task->priority = priority;
+
+    return task;
+}
+
 static void *thread_func(void *data) {
     JThreadPool *pool = data;
 
@@ -51,16 +61,6 @@ static void *thread_func(void *data) {
     }
 
     return NULL;
-}
-
-JThreadPoolTask *j_threadpool_task_new(JThreadPoolTaskFunc func, void *data, int priority) {
-    JThreadPoolTask *task = (JThreadPoolTask *)malloc(sizeof(JThreadPoolTask));
-
-    task->func = func;
-    task->data = data;
-    task->priority = priority;
-
-    return task;
 }
 
 JThreadPool *j_threadpool_new(size_t thread_num) {
@@ -96,10 +96,10 @@ void j_threadpool_shutdown(JThreadPool *pool) {
     }
 }
 
-void j_threadpool_add_task(JThreadPool *pool, JThreadPoolTask *task) {
+void j_threadpool_add_task(JThreadPool *pool, JThreadPoolTaskFunc func, void *data, int priority) {
     pthread_mutex_lock(&pool->locker);
     if (!pool->shutdown) {
-        j_prequeue_push(pool->prequeue, task);
+        j_prequeue_push(pool->prequeue, j_threadpool_task_new(func, data, priority));
     }
     pthread_mutex_unlock(&pool->locker);
     pthread_cond_signal(&pool->not_empty);

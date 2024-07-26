@@ -14,8 +14,7 @@ int main(void) {
 
     const size_t task_num = 100;
     for (size_t i = 0; i < task_num; ++i) {
-        JThreadPoolTask *task = j_threadpool_task_new(print_num, SIZE_TO_PTR(i), i);
-        j_threadpool_add_task(pool, task);
+        j_threadpool_add_task(pool, print_num, SIZE_TO_PTR(i), i);
     }
 
     j_threadpool_shutdown(pool);
